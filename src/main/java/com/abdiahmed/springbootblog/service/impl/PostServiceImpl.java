@@ -1,7 +1,7 @@
 package com.abdiahmed.springbootblog.service.impl;
 
 import com.abdiahmed.springbootblog.error.ResourceNotFoundException;
-import com.abdiahmed.springbootblog.model.MyUser;
+import com.abdiahmed.springbootblog.model.User;
 import com.abdiahmed.springbootblog.model.Post;
 import com.abdiahmed.springbootblog.payload.requestDTO.PostRequestDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PageablePostDTO;
@@ -39,7 +39,7 @@ public class PostServiceImpl implements PostService {
         UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         String username = user.getUsername();
-        MyUser foundUser = userService.findByName(username);
+        User foundUser = userService.findByName(username);
 
         post.setUser(foundUser);
         postRepository.save(post);

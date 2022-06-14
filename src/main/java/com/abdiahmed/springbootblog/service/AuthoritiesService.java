@@ -1,28 +1,28 @@
 package com.abdiahmed.springbootblog.service;
 
 import com.abdiahmed.springbootblog.error.ResourceExist;
-import com.abdiahmed.springbootblog.model.MyAuthorities;
+import com.abdiahmed.springbootblog.model.Authorities;
 
 import java.util.List;
 
 public interface AuthoritiesService {
-    List<MyAuthorities> getAllAuthorities();
+    List<Authorities> getAllAuthorities();
 
-    MyAuthorities getAuthorityById(long id);
+    Authorities getAuthorityById(long id);
 
-    MyAuthorities createAuthority(String authority) throws ResourceExist;
+    Authorities createAuthority(String authority) throws ResourceExist;
 
-    MyAuthorities updateAuthority(long id, String role);
+    Authorities updateAuthority(long id, String role);
 
-    MyAuthorities deleteAuthority(long id);
+    Authorities deleteAuthority(long id);
 
-    MyAuthorities findAuthorityByName(String name);
+    Authorities findAuthorityByName(String name);
 
     boolean authotiryExists(String name);
 
-    MyAuthorities saveAuthority(MyAuthorities authority);
+    Authorities saveAuthority(Authorities authority);
 
-    List<MyAuthorities> SaveAuthoritiesList(List<MyAuthorities> authoritiesList);
+    List<Authorities> SaveAuthoritiesList(List<Authorities> authoritiesList);
 
 
 }

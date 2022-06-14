@@ -27,7 +27,7 @@ public class Post {
     @ManyToOne()
     @JsonIgnore
     @JoinColumn(name = "user_id",referencedColumnName = "id")
-    private MyUser user;
+    private User user;
 
     public void addComment(Comment comment) {
         comments.add(comment);

@@ -2,14 +2,14 @@ package com.abdiahmed.springbootblog.service.impl;
 
 import com.abdiahmed.springbootblog.error.ResourceExist;
 import com.abdiahmed.springbootblog.error.ResourceNotFoundException;
-import com.abdiahmed.springbootblog.model.MyAuthorities;
-import com.abdiahmed.springbootblog.model.MyRoles;
-import com.abdiahmed.springbootblog.model.MyUser;
+import com.abdiahmed.springbootblog.model.Authorities;
+import com.abdiahmed.springbootblog.model.Roles;
+import com.abdiahmed.springbootblog.model.User;
 import com.abdiahmed.springbootblog.payload.requestDTO.RegisterDTO;
 import com.abdiahmed.springbootblog.payload.requestDTO.SignInDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.JwtToken;
 import com.abdiahmed.springbootblog.payload.responseDTO.PageableUserDTO;
-import com.abdiahmed.springbootblog.repository.MyUserRepository;
+import com.abdiahmed.springbootblog.repository.UserRepository;
 import com.abdiahmed.springbootblog.security.JwtTokenProvider;
 import com.abdiahmed.springbootblog.service.UserService;
 import org.springframework.data.domain.Page;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-  MyUserRepository userRepo;
+  UserRepository userRepo;
   RoleServiceImpl roleService;
   AuthoritiesServiceImpl authoritiesService;
   BCryptPasswordEncoder passwordEncoder;
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
   JwtTokenProvider jwtTokenProvider;
 
   public UserServiceImpl(
-      MyUserRepository userRepo,
+      UserRepository userRepo,
       BCryptPasswordEncoder passwordEncoder,
       AuthenticationManager authenticationManager,
       JwtTokenProvider jwtTokenProvider,
@@ -55,47 +55,47 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public MyUser registerUser(RegisterDTO user) throws ResourceExist {
+  public User registerUser(RegisterDTO user) throws ResourceExist {
 
     if (userRepo.count() == 0) {
       if(roleService.roleDoesNotExist("ROLE_ADMIN")){
 
       }
-      MyRoles adminRole = roleService.createRole("ROLE_ADMIN");
+      Roles adminRole = roleService.createRole("ROLE_ADMIN");
 
-      List<MyAuthorities> myAuthoritiesList = new ArrayList<>();
+      List<Authorities> authoritiesList = new ArrayList<>();
 
-      MyAuthorities authorities1 = authoritiesService.createAuthority("User:Read");
+      Authorities authorities1 = authoritiesService.createAuthority("User:Read");
       authoritiesService.addRole(authorities1.getId(),adminRole);
 
-      MyAuthorities authorities2 = authoritiesService.createAuthority("User:Create");
+      Authorities authorities2 = authoritiesService.createAuthority("User:Create");
       authoritiesService.addRole(authorities2.getId(),adminRole);
 
-      MyAuthorities authorities3 = authoritiesService.createAuthority("User:Update");
+      Authorities authorities3 = authoritiesService.createAuthority("User:Update");
       authoritiesService.addRole(authorities3.getId(),adminRole);
 
-      MyAuthorities authorities4 = authoritiesService.createAuthority("User:Delete");
+      Authorities authorities4 = authoritiesService.createAuthority("User:Delete");
       authoritiesService.addRole(authorities4.getId(),adminRole);
 
-      myAuthoritiesList.add(authorities1);
-      myAuthoritiesList.add(authorities2);
-      myAuthoritiesList.add(authorities3);
-      myAuthoritiesList.add(authorities4);
+      authoritiesList.add(authorities1);
+      authoritiesList.add(authorities2);
+      authoritiesList.add(authorities3);
+      authoritiesList.add(authorities4);
 
-      List<MyAuthorities> mySavedAuthorities = authoritiesService.SaveAuthoritiesList(myAuthoritiesList);
+      List<Authorities> mySavedAuthorities = authoritiesService.SaveAuthoritiesList(authoritiesList);
 
-      for(MyAuthorities authority : mySavedAuthorities) {
+      for(Authorities authority : mySavedAuthorities) {
         adminRole.addAuthority(authority);
       }
-      MyRoles savedRole = roleService.saveRole(adminRole);
+      Roles savedRole = roleService.saveRole(adminRole);
 
-      MyUser myUser =
-              MyUser.builder()
+      User myUser =
+              User.builder()
                       .name(user.getName())
                       .username(user.getUsername())
                       .email(user.getEmail())
                       .password(passwordEncoder.encode(user.getPassword()))
-                      .myRoles(Collections.singleton(savedRole))
+                      .roles(Collections.singleton(savedRole))
                       .isAccountNonExpired(true)
                       .isAccountNonLocked(true)
                       .isCredentialsNonExpired(true)
@@ -104,11 +104,11 @@ public class UserServiceImpl implements UserService {
       return userRepo.save(myUser);
 
     } else {
-      MyRoles userRole = null;
+      Roles userRole = null;
       if(roleService.roleDoesNotExist("ROLE_USER")) {
-        MyRoles newUserRole = roleService.createRole("ROLE_USER");
+        Roles newUserRole = roleService.createRole("ROLE_USER");
 
-        MyAuthorities authorities = authoritiesService.findAuthorityByName("User:Read");
+        Authorities authorities = authoritiesService.findAuthorityByName("User:Read");
         authorities.setRoles(newUserRole);
 
         authorities = authoritiesService.saveAuthority(authorities);
@@ -117,8 +117,8 @@ public class UserServiceImpl implements UserService {
 
       }
 
-      MyUser myUser =
-              MyUser.builder()
+      User myUser =
+              User.builder()
                       .name(user.getName())
                       .username(user.getUsername())
                       .email(user.getEmail())
@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public MyUser findByName(String name) {
+  public User findByName(String name) {
     return userRepo.findByUsername(name).orElseThrow(()-> new ResourceNotFoundException("User", "name", name));
   }
 
@@ -157,20 +157,20 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public MyUser saveUser(MyUser user) {
+  public User saveUser(User user) {
     return userRepo.save(user);
   }
 
   @Override
-  public MyUser createUser(MyUser user) {
-    Set<MyRoles> roleSet = user.getMyRoles();
-    MyUser myUser =
-            MyUser.builder()
+  public User createUser(User user) {
+    Set<Roles> roleSet = user.getRoles();
+    User myUser =
+            User.builder()
                     .name(user.getName())
                     .username(user.getUsername())
                     .email(user.getEmail())
                     .password(passwordEncoder.encode(user.getPassword()))
-                    .myRoles(roleSet)
+                    .roles(roleSet)
                     .isAccountNonExpired(true)
                     .isAccountNonLocked(true)
                     .isCredentialsNonExpired(true)
@@ -179,7 +179,7 @@ public class UserServiceImpl implements UserService {
 
 
 
-    user.getMyRoles().forEach(role -> role.addUser(myUser));
+    user.getRoles().forEach(role -> role.addUser(myUser));
 
     return userRepo.save(myUser);
   }
@@ -188,9 +188,9 @@ public class UserServiceImpl implements UserService {
   public PageableUserDTO getAllUsers(int pageNo, int pageSize, String sortBy, String sortDir) {
     Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
     Pageable pageable = PageRequest.of(pageNo - 1,pageSize,sort);
-    Page<MyUser> page = userRepo.findAll(pageable);
+    Page<User> page = userRepo.findAll(pageable);
 
-    List<MyUser> users = page.stream().collect(Collectors.toList());
+    List<User> users = page.stream().collect(Collectors.toList());
 
     return PageableUserDTO.builder()
             .responseDTOList(users)
@@ -203,12 +203,12 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public MyUser getUserById(long id) {
+  public User getUserById(long id) {
     return userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
   }
 
   @Override
-  public MyUser updateUser(long id, MyUser user) {
+  public User updateUser(long id, User user) {
     return null;
   }
 
