@@ -1,6 +1,6 @@
 package com.abdiahmed.springbootblog.controller;
 
-import com.abdiahmed.springbootblog.model.MyUser;
+import com.abdiahmed.springbootblog.model.User;
 import com.abdiahmed.springbootblog.payload.responseDTO.PageableUserDTO;
 import com.abdiahmed.springbootblog.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +16,15 @@ public class UserController {
     UserServiceImpl userService;
 
     @PostMapping(consumes={"application/json"})
-    public ResponseEntity<MyUser> createUser(@RequestBody MyUser user) {
-        MyUser newUser = userService.createUser(user);
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User newUser = userService.createUser(user);
 
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MyUser> getUserById(@PathVariable long id) {
-        MyUser newUser = userService.getUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable long id) {
+        User newUser = userService.getUserById(id);
 
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }

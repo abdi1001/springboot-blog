@@ -1,27 +1,27 @@
 package com.abdiahmed.springbootblog.service;
 
 import com.abdiahmed.springbootblog.error.ResourceExist;
-import com.abdiahmed.springbootblog.model.MyRoles;
+import com.abdiahmed.springbootblog.model.Roles;
 
 import java.util.List;
 
 public interface RoleService {
-    List<MyRoles> getAllRoles();
+    List<Roles> getAllRoles();
 
-    MyRoles getRoleById(long id);
+    Roles getRoleById(long id);
 
-    MyRoles createRole(String role) throws ResourceExist;
+    Roles createRole(String role) throws ResourceExist;
 
-    MyRoles updateRole(long id, String role);
+    Roles updateRole(long id, String role);
 
-    MyRoles deleteRole(long id);
+    Roles deleteRole(long id);
 
-    MyRoles addAuthorityToRole(long id, long authorityId);
+    Roles addAuthorityToRole(long id, long authorityId);
 
-    MyRoles getRoleByName(String name);
+    Roles getRoleByName(String name);
     boolean roleDoesNotExist(String name);
 
-    MyRoles saveRole(MyRoles roles);
+    Roles saveRole(Roles roles);
 
 }
 

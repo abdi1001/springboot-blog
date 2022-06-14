@@ -2,9 +2,9 @@ package com.abdiahmed.springbootblog.service.impl;
 
 import com.abdiahmed.springbootblog.error.ResourceExist;
 import com.abdiahmed.springbootblog.error.ResourceNotFoundException;
-import com.abdiahmed.springbootblog.model.MyAuthorities;
-import com.abdiahmed.springbootblog.model.MyRoles;
-import com.abdiahmed.springbootblog.repository.MyRolesRepository;
+import com.abdiahmed.springbootblog.model.Authorities;
+import com.abdiahmed.springbootblog.model.Roles;
+import com.abdiahmed.springbootblog.repository.RolesRepository;
 import com.abdiahmed.springbootblog.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,22 +13,23 @@ import java.util.List;
 
 @Service
 public class RoleServiceImpl implements RoleService {
-  @Autowired MyRolesRepository roleRepo;
+  @Autowired
+  RolesRepository roleRepo;
   @Autowired
   AuthoritiesServiceImpl authoritiesService;
 
   @Override
-  public List<MyRoles> getAllRoles() {
+  public List<Roles> getAllRoles() {
     return roleRepo.findAll();
   }
 
   @Override
-  public MyRoles getRoleById(long id) {
+  public Roles getRoleById(long id) {
     return roleRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role", "Id", id));
   }
 
   @Override
-  public MyRoles getRoleByName(String name) {
+  public Roles getRoleByName(String name) {
     return roleRepo.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Role", "name", name));
   }
 
@@ -38,37 +39,37 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  public MyRoles saveRole(MyRoles role) {
+  public Roles saveRole(Roles role) {
     return roleRepo.save(role);
   }
 
   @Override
-  public MyRoles createRole(String role) throws ResourceExist {
+  public Roles createRole(String role) throws ResourceExist {
     if(roleRepo.findByName(role).isPresent()) {
       throw new ResourceExist("Role already exists");
     }
-    MyRoles newRole = new MyRoles();
+    Roles newRole = new Roles();
     newRole.setName(role);
    return roleRepo.save(newRole);
   }
 
   @Override
-  public MyRoles updateRole(long id, String role) {
-    MyRoles foundRole = getRoleById(id);
+  public Roles updateRole(long id, String role) {
+    Roles foundRole = getRoleById(id);
     foundRole.setName(role);
    return roleRepo.save(foundRole);
   }
 
   @Override
-  public MyRoles deleteRole(long id) {
-    MyRoles deleteRole = getRoleById(id);
+  public Roles deleteRole(long id) {
+    Roles deleteRole = getRoleById(id);
     roleRepo.delete(deleteRole);
     return  deleteRole;
   }
 
-  public MyRoles addAuthorityToRole(long roleId, long authorityId) {
-    MyAuthorities authority = authoritiesService.getAuthorityById(authorityId);
-    MyRoles role = getRoleById(roleId);
+  public Roles addAuthorityToRole(long roleId, long authorityId) {
+    Authorities authority = authoritiesService.getAuthorityById(authorityId);
+    Roles role = getRoleById(roleId);
     role.addAuthority(authority);
     authority.setRoles(role);
     authoritiesService.addRole(authorityId, role);

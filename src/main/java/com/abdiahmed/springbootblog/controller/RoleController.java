@@ -1,7 +1,7 @@
 package com.abdiahmed.springbootblog.controller;
 
 import com.abdiahmed.springbootblog.error.ResourceExist;
-import com.abdiahmed.springbootblog.model.MyRoles;
+import com.abdiahmed.springbootblog.model.Roles;
 import com.abdiahmed.springbootblog.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,38 +18,38 @@ public class RoleController {
     RoleService roleService;
 
     @GetMapping()
-    public ResponseEntity<List<MyRoles>> getAllRoles(){
-        List<MyRoles> roles = roleService.getAllRoles();
+    public ResponseEntity<List<Roles>> getAllRoles(){
+        List<Roles> roles = roleService.getAllRoles();
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MyRoles> getRoleById(@PathVariable long id){
-        MyRoles role = roleService.getRoleById(id);
+    public ResponseEntity<Roles> getRoleById(@PathVariable long id){
+        Roles role = roleService.getRoleById(id);
         return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
     @PostMapping("/{roleId}/{authorityId}")
-    public ResponseEntity<MyRoles> getRoleById(@PathVariable long roleId, @PathVariable long authorityId){
-        MyRoles role = roleService.addAuthorityToRole(roleId,authorityId);
+    public ResponseEntity<Roles> getRoleById(@PathVariable long roleId, @PathVariable long authorityId){
+        Roles role = roleService.addAuthorityToRole(roleId,authorityId);
         return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<MyRoles> createRole(@RequestBody MyRoles role) throws ResourceExist {
-        MyRoles newRole = roleService.createRole(role.getName());
+    public ResponseEntity<Roles> createRole(@RequestBody Roles role) throws ResourceExist {
+        Roles newRole = roleService.createRole(role.getName());
         return new ResponseEntity<>(newRole, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MyRoles> updateRole(@PathVariable long id, @RequestBody MyRoles role){
-        MyRoles updatedRole = roleService.updateRole(id, role.getName());
+    public ResponseEntity<Roles> updateRole(@PathVariable long id, @RequestBody Roles role){
+        Roles updatedRole = roleService.updateRole(id, role.getName());
         return new ResponseEntity<>(updatedRole, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MyRoles> deleteRole(@PathVariable long id){
-        MyRoles updatedRole = roleService.deleteRole(id);
+    public ResponseEntity<Roles> deleteRole(@PathVariable long id){
+        Roles updatedRole = roleService.deleteRole(id);
         return new ResponseEntity<>(updatedRole, HttpStatus.OK);
     }
 }

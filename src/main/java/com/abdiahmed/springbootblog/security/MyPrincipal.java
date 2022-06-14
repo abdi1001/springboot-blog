@@ -1,7 +1,7 @@
 package com.abdiahmed.springbootblog.security;
 
-import com.abdiahmed.springbootblog.model.MyAuthorities;
-import com.abdiahmed.springbootblog.model.MyUser;
+import com.abdiahmed.springbootblog.model.Authorities;
+import com.abdiahmed.springbootblog.model.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,17 +18,17 @@ import java.util.List;
 @NoArgsConstructor
 public class MyPrincipal implements UserDetails {
 
-    private MyUser user;
+    private User user;
 
-    public MyPrincipal(MyUser user) {
+    public MyPrincipal(User user) {
         this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        user.getMyRoles().forEach(roles -> {
-            List<MyAuthorities>  authList = roles.getAuthorities();
+        user.getRoles().forEach(roles -> {
+            List<Authorities>  authList = roles.getAuthorities();
             authList.forEach(auth -> authorities.add(new SimpleGrantedAuthority(auth.getName())));
         });
         return authorities;
