@@ -26,26 +26,26 @@ public class User {
   private String password;
 
   public User() {
-    this.roles = new HashSet<>();
+    this.role = new HashSet<>();
     this.posts = new HashSet<>();
   }
 
-  @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+  @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
   @JoinTable(
       name = "user_role",
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private Set<Roles> roles = new HashSet<>();
+  private Set<Role> role = new HashSet<>();
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true,fetch = FetchType.EAGER)
   private Set<Post> posts = new HashSet<>();
 
-  public void addRoleToUser(Roles role) {
-    roles.add(role);
+  public void addRoleToUser(Role roleInput) {
+    role.add(roleInput);
   }
 
-  public void removeRoleToUser(Roles role) {
-    roles.remove(role);
+  public void removeRoleToUser(Role roleInput) {
+    role.remove(roleInput);
   }
 
   public void addPostForUser(Post post) {

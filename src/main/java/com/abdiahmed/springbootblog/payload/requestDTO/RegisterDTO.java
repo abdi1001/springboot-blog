@@ -1,6 +1,6 @@
 package com.abdiahmed.springbootblog.payload.requestDTO;
 
-import com.abdiahmed.springbootblog.model.Roles;
+import com.abdiahmed.springbootblog.payload.responseDTO.RoleResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,5 +15,5 @@ public class RegisterDTO {
     private String username;
     private String email;
     private String password;
-    private Set<Roles> roles;
+    private Set<RoleResponseDTO> roles;
 }

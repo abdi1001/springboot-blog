@@ -16,15 +16,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "my_roles")
-public class Roles {
+public class Role {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String name;
-  @OneToMany(mappedBy = "roles", fetch = FetchType.EAGER,cascade = CascadeType.MERGE)
+  @ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+  @JoinTable(
+          name = "role_authorities",
+          joinColumns = @JoinColumn(name = "role_id"),
+          inverseJoinColumns = @JoinColumn(name = "authorities_id_id"))
   private List<Authorities> authorities = new ArrayList<>();
   @JsonIgnore
-  @ManyToMany(mappedBy = "roles",cascade = CascadeType.MERGE)
+  @ManyToMany(mappedBy = "role",cascade = CascadeType.MERGE)
   private List<User> users = new ArrayList<>();
 
   public void addAuthority(Authorities authority) {

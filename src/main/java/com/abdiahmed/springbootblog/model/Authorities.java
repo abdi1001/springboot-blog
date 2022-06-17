@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -19,9 +21,16 @@ public class Authorities {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id",referencedColumnName = "id")
+    @ManyToMany(mappedBy = "authorities",cascade = CascadeType.DETACH)
     @JsonIgnore
-    private Roles roles;
+    private Set<Role> role = new HashSet<>();
+
+    public void addRoleToAuthorities(Role roleInput) {
+        role.add(roleInput);
+    }
+
+    public void removeRoleToAuthorities(Role roleInput) {
+        role.remove(roleInput);
+    }
 
 }

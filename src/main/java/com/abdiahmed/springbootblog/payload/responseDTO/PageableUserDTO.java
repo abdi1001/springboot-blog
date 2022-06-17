@@ -1,6 +1,5 @@
 package com.abdiahmed.springbootblog.payload.responseDTO;
 
-import com.abdiahmed.springbootblog.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class PageableUserDTO {
-    private List<User> responseDTOList;
+    private List<UserResponseDTO> responseDTOList;
     private int pageNo;
     private int pageSize;
     private int totalPages;

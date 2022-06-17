@@ -3,9 +3,11 @@ package com.abdiahmed.springbootblog.service.impl;
 import com.abdiahmed.springbootblog.error.ResourceExist;
 import com.abdiahmed.springbootblog.error.ResourceNotFoundException;
 import com.abdiahmed.springbootblog.model.Authorities;
-import com.abdiahmed.springbootblog.model.Roles;
+import com.abdiahmed.springbootblog.model.Role;
+import com.abdiahmed.springbootblog.payload.responseDTO.AuthoritiesResponseDTO;
 import com.abdiahmed.springbootblog.repository.AuthoritiesRepository;
-import com.abdiahmed.springbootblog.service.AuthoritiesService;
+import com.abdiahmed.springbootblog.service.interfaces.AuthoritiesService;
+import com.abdiahmed.springbootblog.service.mapper.AuthoritiesMapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,9 @@ public class AuthoritiesServiceImpl implements AuthoritiesService {
 
   @Autowired
   AuthoritiesRepository authRepo;
+
+  @Autowired
+  AuthoritiesMapperImpl authoritiesMapper;
 
   @Override
   public List<Authorities> getAllAuthorities() {
@@ -48,10 +53,11 @@ public class AuthoritiesServiceImpl implements AuthoritiesService {
   }
 
   @Override
-  public Authorities deleteAuthority(long id) {
-    Authorities deleteAuthority = getAuthorityById(id);
-    authRepo.delete(deleteAuthority);
-    return deleteAuthority;
+  public AuthoritiesResponseDTO deleteAuthority(long authoritiesId) {
+   Authorities authorities = getAuthorityById(authoritiesId);
+      authRepo.delete(authorities);
+
+    return authoritiesMapper.mapToDTO(authorities);
   }
 
   @Override
@@ -74,9 +80,9 @@ public class AuthoritiesServiceImpl implements AuthoritiesService {
     return authRepo.saveAll(authoritiesList);
   }
 
-  public void addRole(long id, Roles role) {
+  public void addRole(long id, Role role) {
     Authorities authorityById = getAuthorityById(id);
-    authorityById.setRoles(role);
+    authorityById.addRoleToAuthorities(role);
     authRepo.save(authorityById);
   }
 }

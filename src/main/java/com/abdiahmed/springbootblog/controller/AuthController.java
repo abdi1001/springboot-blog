@@ -1,10 +1,10 @@
 package com.abdiahmed.springbootblog.controller;
 
 import com.abdiahmed.springbootblog.error.ResourceExist;
-import com.abdiahmed.springbootblog.model.User;
 import com.abdiahmed.springbootblog.payload.requestDTO.RegisterDTO;
 import com.abdiahmed.springbootblog.payload.requestDTO.SignInDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.JwtToken;
+import com.abdiahmed.springbootblog.payload.responseDTO.UserResponseDTO;
 import com.abdiahmed.springbootblog.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +22,8 @@ public class AuthController {
   UserServiceImpl myUserService;
 
   @PostMapping("/register")
-  public ResponseEntity<User> myUser(@RequestBody RegisterDTO registerDTO) throws ResourceExist {
-    User user = myUserService.registerUser(registerDTO);
+  public ResponseEntity<UserResponseDTO> myUser(@RequestBody RegisterDTO registerDTO) throws ResourceExist {
+    UserResponseDTO user = myUserService.registerUser(registerDTO);
     return new ResponseEntity<>(user, HttpStatus.CREATED);
   }
 

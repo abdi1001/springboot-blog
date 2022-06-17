@@ -7,8 +7,9 @@ import com.abdiahmed.springbootblog.model.Post;
 import com.abdiahmed.springbootblog.payload.requestDTO.CommentRequestDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.CommentResponseDTO;
 import com.abdiahmed.springbootblog.repository.CommentRepository;
-import com.abdiahmed.springbootblog.service.CommentService;
-import org.modelmapper.ModelMapper;
+import com.abdiahmed.springbootblog.service.interfaces.CommentService;
+//import org.modelmapper.ModelMapper;
+import com.abdiahmed.springbootblog.service.mapper.CommentMapperImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,13 +21,15 @@ public class CommentServiceImpl implements CommentService {
   final PostServiceImpl postService;
 
   final CommentRepository commentRepository;
-  ModelMapper modelMapper;
+//  ModelMapper modelMapper;
+  final CommentMapperImpl commentMapper;
 
   public CommentServiceImpl(
-      PostServiceImpl postService, CommentRepository commentRepository, ModelMapper modelMapper) {
+      PostServiceImpl postService, CommentRepository commentRepository,CommentMapperImpl commentMapper) {
     this.postService = postService;
     this.commentRepository = commentRepository;
-    this.modelMapper = modelMapper;
+    this.commentMapper =commentMapper;
+//    this.modelMapper = modelMapper;
   }
 
   @Override
@@ -81,12 +84,10 @@ public class CommentServiceImpl implements CommentService {
   }
 
   private Comment mapToEntity(CommentRequestDTO commentRequestDTO) {
-    Comment comment = modelMapper.map(commentRequestDTO, Comment.class);
-    return comment;
+    return commentMapper.mapToEntity(commentRequestDTO);
   }
 
-  private CommentResponseDTO mapToDTO(Comment savedCommet) {
-    CommentResponseDTO commentResponseDTO = modelMapper.map(savedCommet, CommentResponseDTO.class);
-    return commentResponseDTO;
+  private CommentResponseDTO mapToDTO(Comment savedComment) {
+    return commentMapper.mapToDTO(savedComment);
   }
 }

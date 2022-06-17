@@ -15,35 +15,31 @@ import java.util.List;
 public class AuthoritiesController {
 
     @Autowired
-    AuthoritiesServiceImpl authrepo;
+    AuthoritiesServiceImpl authService;
 
     @GetMapping()
     public ResponseEntity<List<Authorities>> getAllAuthorities(){
-        List<Authorities> authoritys = authrepo.getAllAuthorities();
+        List<Authorities> authoritys = authService.getAllAuthorities();
         return new ResponseEntity<>(authoritys, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Authorities> getAuthorityById(@PathVariable long id){
-        Authorities authority = authrepo.getAuthorityById(id);
+        Authorities authority = authService.getAuthorityById(id);
         return new ResponseEntity<>(authority, HttpStatus.OK);
     }
 
     @PostMapping()
     public ResponseEntity<Authorities> createAuthority(@RequestBody Authorities authority) throws ResourceExist {
-        Authorities newAuthority = authrepo.createAuthority(authority.getName());
+        Authorities newAuthority = authService.createAuthority(authority.getName());
         return new ResponseEntity<>(newAuthority, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Authorities> updateAuthority(@PathVariable long id, @RequestBody Authorities authority){
-        Authorities updatedAuthority = authrepo.updateAuthority(id, authority.getName());
+        Authorities updatedAuthority = authService.updateAuthority(id, authority.getName());
         return new ResponseEntity<>(updatedAuthority, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Authorities> deleteAuthority(@PathVariable long id){
-        Authorities updatedAuthority = authrepo.deleteAuthority(id);
-        return new ResponseEntity<>(updatedAuthority, HttpStatus.OK);
-    }
+
 }

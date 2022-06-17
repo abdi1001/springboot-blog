@@ -3,12 +3,13 @@ package com.abdiahmed.springbootblog.service.impl;
 import com.abdiahmed.springbootblog.error.ResourceNotFoundException;
 import com.abdiahmed.springbootblog.model.User;
 import com.abdiahmed.springbootblog.model.Post;
-import com.abdiahmed.springbootblog.payload.requestDTO.PostRequestDTO;
+import com.abdiahmed.springbootblog.payload.requestDTO.CreatePostDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PageablePostDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PostResponseDTO;
 import com.abdiahmed.springbootblog.repository.PostRepository;
-import com.abdiahmed.springbootblog.service.PostService;
-import org.modelmapper.ModelMapper;
+import com.abdiahmed.springbootblog.service.interfaces.PostService;
+//import org.modelmapper.ModelMapper;
+import com.abdiahmed.springbootblog.service.mapper.PostMapperImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,17 +26,20 @@ public class PostServiceImpl implements PostService {
 
     PostRepository postRepository;
     UserServiceImpl userService;
-    ModelMapper modelMapper;
+//    ModelMapper modelMapper;
+    PostMapperImpl postMapper;
 
-    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper, UserServiceImpl userService) {
+
+    public PostServiceImpl(PostRepository postRepository, UserServiceImpl userService,PostMapperImpl postMapper) {
         this.postRepository = postRepository;
-        this.modelMapper = modelMapper;
+//        this.modelMapper = modelMapper;
         this.userService = userService;
+        this.postMapper = postMapper;
     }
 
     @Override
-    public PostResponseDTO createPost(PostRequestDTO postRequestDTO) {
-        Post post = mapToEntity(postRequestDTO);
+    public PostResponseDTO createPost(CreatePostDTO createPostDTO) {
+        Post post = mapToEntity(createPostDTO);
         UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         String username = user.getUsername();
@@ -59,7 +63,7 @@ public class PostServiceImpl implements PostService {
 
         List<PostResponseDTO> posts = page.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
 
-        PageablePostDTO pageablePostDTO = PageablePostDTO.builder()
+        return PageablePostDTO.builder()
                 .responseDTOList(posts)
                 .pageSize(page.getSize())
                 .pageNo(page.getNumber() + 1)
@@ -67,7 +71,6 @@ public class PostServiceImpl implements PostService {
                 .totalElements(page.getTotalElements())
                 .isLast(page.isLast())
                 .build();
-        return pageablePostDTO;
     }
 
     @Override
@@ -78,16 +81,15 @@ public class PostServiceImpl implements PostService {
     }
 
     public Post getPostByIdInternal(long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "ID", id));
 
-        return post;
+        return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "ID", id));
     }
 
     @Override
-    public PostResponseDTO updatePost(long id, PostRequestDTO postRequestDTO) {
+    public PostResponseDTO updatePost(long id, CreatePostDTO createPostDTO) {
         Post post = getPostByIdInternal(id);
-        post.setTitle(postRequestDTO.getTitle());
-        post.setBody(postRequestDTO.getBody());
+        post.setTitle(createPostDTO.getTitle());
+        post.setBody(createPostDTO.getBody());
         Post savedPost = postRepository.save(post);
         return mapToDTO(savedPost);
     }
@@ -98,15 +100,13 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
-    private Post mapToEntity(PostRequestDTO postRequestDTO) {
-        Post post = modelMapper.map(postRequestDTO, Post.class);
-        return post;
+    private Post mapToEntity(CreatePostDTO createPostDTO) {
+//        Post post = modelMapper.map(postRequestDTO, Post.class);
+        return postMapper.mapToEntity(createPostDTO);
     }
 
     private PostResponseDTO mapToDTO(Post post) {
-        PostResponseDTO postResponseDTO = new PostResponseDTO();
-        postResponseDTO = modelMapper.map(post, PostResponseDTO.class);
-        return postResponseDTO;
+        return postMapper.mapToDTO(post);
     }
 
 }
