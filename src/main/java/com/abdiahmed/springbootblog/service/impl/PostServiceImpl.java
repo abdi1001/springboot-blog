@@ -1,10 +1,12 @@
 package com.abdiahmed.springbootblog.service.impl;
 
 import com.abdiahmed.springbootblog.error.ResourceNotFoundException;
+import com.abdiahmed.springbootblog.model.Comment;
 import com.abdiahmed.springbootblog.model.Post;
 import com.abdiahmed.springbootblog.model.User;
 import com.abdiahmed.springbootblog.payload.requestDTO.CommentRequestDTO;
 import com.abdiahmed.springbootblog.payload.requestDTO.CreatePostDTO;
+import com.abdiahmed.springbootblog.payload.responseDTO.CommentResponseDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PageablePostDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PostResponseDTO;
 import com.abdiahmed.springbootblog.repository.PostRepository;
@@ -19,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,17 +32,20 @@ public class PostServiceImpl implements PostService {
   //    ModelMapper modelMapper;
   PostMapperImpl postMapper;
   CommentMapperImpl commentMapper;
+  CommentServiceImpl commentService;
 
   public PostServiceImpl(
       PostRepository postRepository,
       UserServiceImpl userService,
       PostMapperImpl postMapper,
+      CommentServiceImpl commentService,
       CommentMapperImpl commentMapper) {
     this.postRepository = postRepository;
     //        this.modelMapper = modelMapper;
     this.userService = userService;
     this.postMapper = postMapper;
     this.commentMapper = commentMapper;
+    this.commentService = commentService;
   }
 
   @Override
@@ -114,10 +120,28 @@ public class PostServiceImpl implements PostService {
   @Override
   public PostResponseDTO addCommentToPost(long postId, CommentRequestDTO commentRequestDTO) {
     Post post = getPostByIdInternal(postId);
-    post.addComment(commentMapper.mapToEntity(commentRequestDTO));
+    Comment comment1 = commentMapper.mapToEntity(commentRequestDTO);
+    comment1.setPost(post);
+    post.addComment(comment1);
     Post savedPost = postRepository.save(post);
-    savedPost.getComments().forEach(comment -> comment.setPost(post));
-    Post savedPost2 = postRepository.save(post);
-    return postMapper.mapToDTO(savedPost2);
+    return postMapper.mapToDTO(savedPost);
   }
+
+  @Override
+  public CommentResponseDTO findCommentInPost(long postId, long commentId) {
+    Post post = getPostByIdInternal(postId);
+    Comment comment1 = commentService.findCommentByIdInternal(commentId);
+    Optional<Comment> foundComment = post.getComments().stream().filter(comment -> comment == comment1).findFirst();
+    Comment comment = foundComment.orElseThrow(() -> new ResourceNotFoundException("Post", "Comment Id", commentId));
+    return commentMapper.mapToDTO(comment);
+  }
+
+//  public Comment findCommentByIdInternal(long postId, long commentId) {
+//    Post post = getPostByIdInternal(postId);
+//    Comment comment = commentService.g
+//    if (!post.getId().equals(comment.getPost().getId())) {
+//      throw new BlogAPIException("Comment does not belong to Post");
+//    }
+//    return comment;
+//  }
 }

@@ -1,14 +1,12 @@
 package com.abdiahmed.springbootblog.service.impl;
 
-import com.abdiahmed.springbootblog.error.BlogAPIException;
 import com.abdiahmed.springbootblog.error.ResourceNotFoundException;
 import com.abdiahmed.springbootblog.model.Comment;
-import com.abdiahmed.springbootblog.model.Post;
 import com.abdiahmed.springbootblog.payload.requestDTO.CommentRequestDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.CommentResponseDTO;
 import com.abdiahmed.springbootblog.repository.CommentRepository;
 import com.abdiahmed.springbootblog.service.interfaces.CommentService;
-//import org.modelmapper.ModelMapper;
+// import org.modelmapper.ModelMapper;
 import com.abdiahmed.springbootblog.service.mapper.CommentMapperImpl;
 import org.springframework.stereotype.Service;
 
@@ -18,76 +16,50 @@ import java.util.stream.Collectors;
 @Service
 public class CommentServiceImpl implements CommentService {
 
-  final PostServiceImpl postService;
+//  final PostServiceImpl postService;
 
   final CommentRepository commentRepository;
-//  ModelMapper modelMapper;
+  //  ModelMapper modelMapper;
   final CommentMapperImpl commentMapper;
 
   public CommentServiceImpl(
-      PostServiceImpl postService, CommentRepository commentRepository,CommentMapperImpl commentMapper) {
-    this.postService = postService;
+//      PostServiceImpl postService,
+      CommentRepository commentRepository,
+      CommentMapperImpl commentMapper) {
     this.commentRepository = commentRepository;
-    this.commentMapper =commentMapper;
-//    this.modelMapper = modelMapper;
-  }
-
-  @Override
-  public CommentResponseDTO createComment(long postId, CommentRequestDTO commentRequestDTO) {
-    Post post = postService.getPostByIdInternal(postId);
-    Comment comment = mapToEntity(commentRequestDTO);
-    comment.setPost(post);
-    Comment savedCommet = commentRepository.save(comment);
-    return mapToDTO(savedCommet);
+    this.commentMapper = commentMapper;
+    //    this.modelMapper = modelMapper;
   }
 
   @Override
   public List<CommentResponseDTO> getAllComment(long id) {
 
     List<Comment> postComment = commentRepository.findByPostId(id);
-    return postComment.stream().map(this::mapToDTO).collect(Collectors.toList());
+    return postComment.stream().map(commentMapper::mapToDTO).collect(Collectors.toList());
+  }
+
+
+
+  @Override
+  public CommentResponseDTO updateCommentById(long commentId, CommentRequestDTO commentRequestDTO) {
+    Comment comment = findCommentByIdInternal(commentId);
+    comment.setComment(comment.getComment());
+    commentRepository.save(comment);
+    return commentMapper.mapToDTO(comment);
   }
 
   @Override
-  public CommentResponseDTO getCommentById(long postId, long commentId) {
-    Comment comment = findCommentByIdInternal(postId, commentId);
-    return mapToDTO(comment);
-  }
-
-  public Comment findCommentByIdInternal(long postId, long commentId) {
-    Post post = postService.getPostByIdInternal(postId);
-    Comment comment =
-        commentRepository
-            .findById(commentId)
-            .orElseThrow(() -> new ResourceNotFoundException("Comment", "ID", commentId));
-    if (!post.getId().equals(comment.getPost().getId())) {
-      throw new BlogAPIException("Comment does not belong to Post");
-    }
-    return comment;
-  }
-
-  @Override
-  public CommentResponseDTO updateCommentById(
-      long postId, long commentId, CommentRequestDTO commentRequestDTO) {
-    Comment comment = findCommentByIdInternal(postId, commentId);
-    comment.setName(commentRequestDTO.getName());
-    comment.setComment(commentRequestDTO.getComment());
-    Comment updatedComment = commentRepository.save(comment);
-    return mapToDTO(updatedComment);
-  }
-
-  @Override
-  public CommentResponseDTO deleteCommentById(long postId, long commentId) {
-    Comment comment = findCommentByIdInternal(postId, commentId);
+  public CommentResponseDTO deleteCommentById(long commentId) {
+    Comment comment = findCommentByIdInternal(commentId);
     commentRepository.delete(comment);
-    return mapToDTO(comment);
+    return commentMapper.mapToDTO(comment);
   }
 
-  private Comment mapToEntity(CommentRequestDTO commentRequestDTO) {
-    return commentMapper.mapToEntity(commentRequestDTO);
+  public Comment findCommentByIdInternal(long commentId) {
+    return commentRepository
+            .findById(commentId)
+            .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
   }
 
-  private CommentResponseDTO mapToDTO(Comment savedComment) {
-    return commentMapper.mapToDTO(savedComment);
-  }
+
 }

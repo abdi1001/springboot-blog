@@ -8,6 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentRequestDTO {
-    private String name;
+//    private String name;
     private String comment;
 }

@@ -20,12 +20,12 @@ public class CommentController {
     this.commentService = commentService;
   }
 
-  @PostMapping("/posts/{id}/comments")
-  public ResponseEntity<CommentResponseDTO> createComment(
-      @PathVariable long id, @RequestBody CommentRequestDTO commentRequestDTO) {
-    CommentResponseDTO commentResponseDTO = commentService.createComment(id, commentRequestDTO);
-    return new ResponseEntity<>(commentResponseDTO, HttpStatus.CREATED);
-  }
+//  @PostMapping("/posts/{id}/comments")
+//  public ResponseEntity<CommentResponseDTO> createComment(
+//      @PathVariable long id, @RequestBody CommentRequestDTO commentRequestDTO) {
+//    CommentResponseDTO commentResponseDTO = commentService.createComment(id, commentRequestDTO);
+//    return new ResponseEntity<>(commentResponseDTO, HttpStatus.CREATED);
+//  }
 
   @GetMapping("/posts/{id}/comments")
   public ResponseEntity<List<CommentResponseDTO>> getAllCommentsByIds(@PathVariable long id) {
@@ -33,12 +33,12 @@ public class CommentController {
     return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
   }
 
-  @GetMapping("/posts/{id}/comments/{commentId}")
-  public ResponseEntity<CommentResponseDTO> getCommentByIds(
-      @PathVariable("id") long postId, @PathVariable("commentId") long commentId) {
-    CommentResponseDTO commentResponseDTO = commentService.getCommentById(postId, commentId);
-    return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
-  }
+//  @GetMapping("/posts/{id}/comments/{commentId}")
+//  public ResponseEntity<CommentResponseDTO> getCommentByIds(
+//      @PathVariable("id") long postId, @PathVariable("commentId") long commentId) {
+//    CommentResponseDTO commentResponseDTO = commentService.getCommentById(postId, commentId);
+//    return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
+//  }
 
   @PutMapping("/posts/{id}/comments/{commentId}")
   public ResponseEntity<CommentResponseDTO> updateComment(
@@ -46,14 +46,14 @@ public class CommentController {
       @PathVariable("commentId") long commentId,
       @RequestBody CommentRequestDTO commentRequestDTO) {
     CommentResponseDTO commentResponseDTO =
-        commentService.updateCommentById(postId, commentId, commentRequestDTO);
+        commentService.updateCommentById(commentId, commentRequestDTO);
     return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
   }
 
   @DeleteMapping("/posts/{id}/comments/{commentId}")
   public ResponseEntity<CommentResponseDTO> deleteComment(
       @PathVariable("id") long postId, @PathVariable("commentId") long commentId) {
-    CommentResponseDTO commentResponseDTO = commentService.deleteCommentById(postId, commentId);
+    CommentResponseDTO commentResponseDTO = commentService.deleteCommentById(commentId);
     return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
   }
 }

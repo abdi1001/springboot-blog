@@ -12,6 +12,7 @@ import java.util.Set;
 public class PostResponseDTO {
 
     private Long id;
+    private String username;
     private String title;
     private String body;
     private Set<CommentResponseDTO> comments;

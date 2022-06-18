@@ -2,6 +2,7 @@ package com.abdiahmed.springbootblog.controller;
 
 import com.abdiahmed.springbootblog.payload.requestDTO.CommentRequestDTO;
 import com.abdiahmed.springbootblog.payload.requestDTO.CreatePostDTO;
+import com.abdiahmed.springbootblog.payload.responseDTO.CommentResponseDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PageablePostDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PostResponseDTO;
 import com.abdiahmed.springbootblog.service.impl.PostServiceImpl;
@@ -60,5 +61,12 @@ public class PostController {
   public ResponseEntity<PostResponseDTO> addCommentToPost(@PathVariable long postId, @RequestBody CommentRequestDTO commentRequestDTO) {
     PostResponseDTO postResponseDTO = postService.addCommentToPost(postId, commentRequestDTO);
     return new ResponseEntity<>(postResponseDTO, HttpStatus.CREATED);
+  }
+
+    @GetMapping("/posts/{id}/comments/{commentId}")
+  public ResponseEntity<CommentResponseDTO> getCommentByIds(
+      @PathVariable("id") long postId, @PathVariable("commentId") long commentId) {
+    CommentResponseDTO commentResponseDTO = postService.findCommentInPost(postId, commentId);
+    return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
   }
 }

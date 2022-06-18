@@ -2,6 +2,7 @@ package com.abdiahmed.springbootblog.service.interfaces;
 
 import com.abdiahmed.springbootblog.payload.requestDTO.CommentRequestDTO;
 import com.abdiahmed.springbootblog.payload.requestDTO.CreatePostDTO;
+import com.abdiahmed.springbootblog.payload.responseDTO.CommentResponseDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PageablePostDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PostResponseDTO;
 
@@ -14,4 +15,8 @@ public interface PostService {
 
 
     PostResponseDTO addCommentToPost(long postId, CommentRequestDTO commentRequestDTO);
+
+//    PostResponseDTO addCommentToPost(long postId, long commentId);
+
+    CommentResponseDTO findCommentInPost(long postId, long commentId);
 }

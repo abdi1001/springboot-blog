@@ -9,6 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 public class CommentResponseDTO {
     private Long id;
-    private String name;
+    private String username;
     private String comment;
 }

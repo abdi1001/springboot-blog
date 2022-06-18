@@ -19,6 +19,7 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String username;
     private String title;
     private String body;
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
