@@ -17,6 +17,8 @@ public interface AuthoritiesService {
 
     AuthoritiesResponseDTO deleteAuthority(long authoritiesId);
 
+    AuthoritiesResponseDTO deleteAuthorityEverywhere(long authoritiesId);
+
     Authorities findAuthorityByName(String name);
 
     boolean authotiryExists(String name);

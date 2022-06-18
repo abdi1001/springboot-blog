@@ -21,7 +21,7 @@ public class Role {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String name;
-  @ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinTable(
           name = "role_authorities",
           joinColumns = @JoinColumn(name = "role_id"),

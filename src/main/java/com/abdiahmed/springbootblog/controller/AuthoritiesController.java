@@ -2,6 +2,7 @@ package com.abdiahmed.springbootblog.controller;
 
 import com.abdiahmed.springbootblog.error.ResourceExist;
 import com.abdiahmed.springbootblog.model.Authorities;
+import com.abdiahmed.springbootblog.payload.responseDTO.AuthoritiesResponseDTO;
 import com.abdiahmed.springbootblog.service.impl.AuthoritiesServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,12 @@ public class AuthoritiesController {
     @PutMapping("/{id}")
     public ResponseEntity<Authorities> updateAuthority(@PathVariable long id, @RequestBody Authorities authority){
         Authorities updatedAuthority = authService.updateAuthority(id, authority.getName());
+        return new ResponseEntity<>(updatedAuthority, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<AuthoritiesResponseDTO> updateAuthority(@PathVariable long id){
+        AuthoritiesResponseDTO updatedAuthority = authService.deleteAuthorityEverywhere(id);
         return new ResponseEntity<>(updatedAuthority, HttpStatus.OK);
     }
 

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthoritiesServiceImpl implements AuthoritiesService {
@@ -58,6 +59,19 @@ public class AuthoritiesServiceImpl implements AuthoritiesService {
       authRepo.delete(authorities);
 
     return authoritiesMapper.mapToDTO(authorities);
+  }
+
+  @Override
+  public AuthoritiesResponseDTO deleteAuthorityEverywhere(long authoritiesId) {
+    Authorities authorities = getAuthorityById(authoritiesId);
+    List<Role> collect = authorities.getRole().stream().filter(role -> role.getAuthorities().contains(authorities)).collect(Collectors.toList());
+
+    for (Role role : collect ) {
+        role.removeAuthority(authorities);
+    }
+    authRepo.delete(authorities);
+    return authoritiesMapper.mapToDTO(authorities);
+
   }
 
   @Override

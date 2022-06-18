@@ -32,4 +32,6 @@ public class AuthController {
     JwtToken token = myUserService.signInUser(signInDTO);
     return new ResponseEntity<>(token, HttpStatus.CREATED);
   }
+
+
 }
