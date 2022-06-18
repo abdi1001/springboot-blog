@@ -26,8 +26,7 @@ public class User {
   private String password;
 
   public User() {
-    this.role = new HashSet<>();
-    this.posts = new HashSet<>();
+
   }
 
   @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
@@ -37,7 +36,7 @@ public class User {
       inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> role = new HashSet<>();
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true,fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "user")
   private Set<Post> posts = new HashSet<>();
 
   public void addRoleToUser(Role roleInput) {

@@ -1,21 +1,21 @@
 package com.abdiahmed.springbootblog.service.impl;
 
 import com.abdiahmed.springbootblog.error.ResourceNotFoundException;
-import com.abdiahmed.springbootblog.model.User;
 import com.abdiahmed.springbootblog.model.Post;
+import com.abdiahmed.springbootblog.model.User;
+import com.abdiahmed.springbootblog.payload.requestDTO.CommentRequestDTO;
 import com.abdiahmed.springbootblog.payload.requestDTO.CreatePostDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PageablePostDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PostResponseDTO;
 import com.abdiahmed.springbootblog.repository.PostRepository;
 import com.abdiahmed.springbootblog.service.interfaces.PostService;
-//import org.modelmapper.ModelMapper;
+import com.abdiahmed.springbootblog.service.mapper.CommentMapperImpl;
 import com.abdiahmed.springbootblog.service.mapper.PostMapperImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,89 +24,100 @@ import java.util.stream.Collectors;
 @Service
 public class PostServiceImpl implements PostService {
 
-    PostRepository postRepository;
-    UserServiceImpl userService;
-//    ModelMapper modelMapper;
-    PostMapperImpl postMapper;
+  PostRepository postRepository;
+  UserServiceImpl userService;
+  //    ModelMapper modelMapper;
+  PostMapperImpl postMapper;
+  CommentMapperImpl commentMapper;
 
+  public PostServiceImpl(
+      PostRepository postRepository,
+      UserServiceImpl userService,
+      PostMapperImpl postMapper,
+      CommentMapperImpl commentMapper) {
+    this.postRepository = postRepository;
+    //        this.modelMapper = modelMapper;
+    this.userService = userService;
+    this.postMapper = postMapper;
+    this.commentMapper = commentMapper;
+  }
 
-    public PostServiceImpl(PostRepository postRepository, UserServiceImpl userService,PostMapperImpl postMapper) {
-        this.postRepository = postRepository;
-//        this.modelMapper = modelMapper;
-        this.userService = userService;
-        this.postMapper = postMapper;
-    }
+  @Override
+  public PostResponseDTO createPost(CreatePostDTO createPostDTO) {
+    Post post = postMapper.mapToEntity(createPostDTO);
+    String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    @Override
-    public PostResponseDTO createPost(CreatePostDTO createPostDTO) {
-        Post post = mapToEntity(createPostDTO);
-        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User foundUser = userService.findByName(username);
 
-        String username = user.getUsername();
-        User foundUser = userService.findByName(username);
+    post.setUser(foundUser);
+    foundUser.addPostForUser(post);
+    userService.saveUser(foundUser);
 
-        post.setUser(foundUser);
-        postRepository.save(post);
-        foundUser.addPostForUser(post);
+    Post savedPost = postRepository.save(post);
+    return postMapper.mapToDTO(savedPost);
+  }
 
+  @Override
+  public PageablePostDTO getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
+    Sort sort =
+        sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+            ? Sort.by(sortBy).ascending()
+            : Sort.by(sortBy).descending();
+    Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+    Page<Post> page = postRepository.findAll(pageable);
 
+    List<PostResponseDTO> posts =
+        page.stream().map(post -> postMapper.mapToDTO(post)).collect(Collectors.toList());
 
-        Post savedPost = postRepository.save(post);
-        return mapToDTO(savedPost);
-    }
+    return PageablePostDTO.builder()
+        .responseDTOList(posts)
+        .pageSize(page.getSize())
+        .pageNo(page.getNumber() + 1)
+        .totalPages(page.getTotalPages())
+        .totalElements(page.getTotalElements())
+        .isLast(page.isLast())
+        .build();
+  }
 
-    @Override
-    public PageablePostDTO getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
-                Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(pageNo - 1,pageSize,sort);
-        Page<Post> page = postRepository.findAll(pageable);
+  @Override
+  public PostResponseDTO getPostById(long id) {
+    Post post =
+        postRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Post", "ID", id));
 
-        List<PostResponseDTO> posts = page.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
+    return postMapper.mapToDTO(post);
+  }
 
-        return PageablePostDTO.builder()
-                .responseDTOList(posts)
-                .pageSize(page.getSize())
-                .pageNo(page.getNumber() + 1)
-                .totalPages(page.getTotalPages())
-                .totalElements(page.getTotalElements())
-                .isLast(page.isLast())
-                .build();
-    }
+  public Post getPostByIdInternal(long id) {
 
-    @Override
-    public PostResponseDTO getPostById(long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "ID", id));
+    return postRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Post", "ID", id));
+  }
 
-        return mapToDTO(post);
-    }
+  @Override
+  public PostResponseDTO updatePost(long id, CreatePostDTO createPostDTO) {
+    Post post = getPostByIdInternal(id);
+    post.setTitle(createPostDTO.getTitle());
+    post.setBody(createPostDTO.getBody());
+    Post savedPost = postRepository.save(post);
+    return postMapper.mapToDTO(savedPost);
+  }
 
-    public Post getPostByIdInternal(long id) {
+  @Override
+  public void deletePost(long id) {
+    Post post = getPostByIdInternal(id);
+    postRepository.deleteById(id);
+  }
 
-        return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "ID", id));
-    }
-
-    @Override
-    public PostResponseDTO updatePost(long id, CreatePostDTO createPostDTO) {
-        Post post = getPostByIdInternal(id);
-        post.setTitle(createPostDTO.getTitle());
-        post.setBody(createPostDTO.getBody());
-        Post savedPost = postRepository.save(post);
-        return mapToDTO(savedPost);
-    }
-
-    @Override
-    public void deletePost(long id) {
-        Post post = getPostByIdInternal(id);
-        postRepository.delete(post);
-    }
-
-    private Post mapToEntity(CreatePostDTO createPostDTO) {
-//        Post post = modelMapper.map(postRequestDTO, Post.class);
-        return postMapper.mapToEntity(createPostDTO);
-    }
-
-    private PostResponseDTO mapToDTO(Post post) {
-        return postMapper.mapToDTO(post);
-    }
-
+  @Override
+  public PostResponseDTO addCommentToPost(long postId, CommentRequestDTO commentRequestDTO) {
+    Post post = getPostByIdInternal(postId);
+    post.addComment(commentMapper.mapToEntity(commentRequestDTO));
+    Post savedPost = postRepository.save(post);
+    savedPost.getComments().forEach(comment -> comment.setPost(post));
+    Post savedPost2 = postRepository.save(post);
+    return postMapper.mapToDTO(savedPost2);
+  }
 }

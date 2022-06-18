@@ -1,5 +1,6 @@
 package com.abdiahmed.springbootblog.controller;
 
+import com.abdiahmed.springbootblog.payload.requestDTO.CommentRequestDTO;
 import com.abdiahmed.springbootblog.payload.requestDTO.CreatePostDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PageablePostDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PostResponseDTO;
@@ -53,5 +54,11 @@ public class PostController {
   public ResponseEntity<String> deletePostById(@PathVariable long id) {
     postService.deletePost(id);
     return new ResponseEntity<>("Post deleted", HttpStatus.OK);
+  }
+
+  @PostMapping("/posts/{postId}")
+  public ResponseEntity<PostResponseDTO> addCommentToPost(@PathVariable long postId, @RequestBody CommentRequestDTO commentRequestDTO) {
+    PostResponseDTO postResponseDTO = postService.addCommentToPost(postId, commentRequestDTO);
+    return new ResponseEntity<>(postResponseDTO, HttpStatus.CREATED);
   }
 }
