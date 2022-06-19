@@ -69,4 +69,18 @@ public class PostController {
     CommentResponseDTO commentResponseDTO = postService.findCommentInPost(postId, commentId);
     return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
   }
+
+  @PostMapping("/posts/{id}/comments/{commentId}")
+  public ResponseEntity<PostResponseDTO> updateCommentByIds(
+          @PathVariable("id") long postId, @PathVariable("commentId") long commentId, @RequestBody CommentRequestDTO commentRequestDTO) {
+    PostResponseDTO commentResponseDTO = postService.updateCommentOnPost(postId, commentId,commentRequestDTO);
+    return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
+  }
+
+  @DeleteMapping("/posts/{id}/comments/{commentId}")
+  public ResponseEntity<PostResponseDTO> deleteCommentByIds(
+          @PathVariable("id") long postId, @PathVariable("commentId") long commentId) {
+    PostResponseDTO commentResponseDTO = postService.deleteCommentInPost(postId, commentId);
+    return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
+  }
 }

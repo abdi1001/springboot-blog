@@ -18,5 +18,11 @@ public interface PostService {
 
 //    PostResponseDTO addCommentToPost(long postId, long commentId);
 
+//    PostResponseDTO updateCommentOnPost(long postId, CommentRequestDTO commentRequestDTO);
+
+    PostResponseDTO updateCommentOnPost(long postId, long commentId, CommentRequestDTO commentRequestDTO);
+
     CommentResponseDTO findCommentInPost(long postId, long commentId);
+
+    PostResponseDTO deleteCommentInPost(long postId, long commentId);
 }

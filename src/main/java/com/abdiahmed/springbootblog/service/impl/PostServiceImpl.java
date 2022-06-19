@@ -136,6 +136,25 @@ public class PostServiceImpl implements PostService {
     return commentMapper.mapToDTO(comment);
   }
 
+  @Override
+  public PostResponseDTO updateCommentOnPost(long postId, long commentId, CommentRequestDTO commentRequestDTO) {
+    Post post = getPostByIdInternal(postId);
+    Comment comment1 = commentService.findCommentByIdInternal(commentId);
+    comment1.setComment(commentRequestDTO.getComment());
+    Post savedPost = postRepository.save(post);
+    return postMapper.mapToDTO(savedPost);
+  }
+
+  @Override
+  public PostResponseDTO deleteCommentInPost(long postId, long commentId) {
+    Post post = getPostByIdInternal(postId);
+    Comment comment1 = commentService.findCommentByIdInternal(commentId);
+//    post.deleteComment(comment1);
+    commentService.deleteCommentById(comment1.getId());
+    postRepository.save(post);
+    return postMapper.mapToDTO(post);
+  }
+
 //  public Comment findCommentByIdInternal(long postId, long commentId) {
 //    Post post = getPostByIdInternal(postId);
 //    Comment comment = commentService.g

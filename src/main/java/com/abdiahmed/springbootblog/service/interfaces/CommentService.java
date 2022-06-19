@@ -1,6 +1,5 @@
 package com.abdiahmed.springbootblog.service.interfaces;
 
-import com.abdiahmed.springbootblog.payload.requestDTO.CommentRequestDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.CommentResponseDTO;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public interface CommentService {
 
 
 
-  CommentResponseDTO updateCommentById(long commentId, CommentRequestDTO commentRequestDTO);
+//  Comment updateCommentById(long commentId, CommentRequestDTO commentRequestDTO);
 
-  CommentResponseDTO deleteCommentById(long commentId);
+  void deleteCommentById(long commentId);
 }

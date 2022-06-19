@@ -1,14 +1,9 @@
 package com.abdiahmed.springbootblog.controller;
 
-import com.abdiahmed.springbootblog.payload.requestDTO.CommentRequestDTO;
-import com.abdiahmed.springbootblog.payload.responseDTO.CommentResponseDTO;
 import com.abdiahmed.springbootblog.service.impl.CommentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/v1")
@@ -27,11 +22,11 @@ public class CommentController {
 //    return new ResponseEntity<>(commentResponseDTO, HttpStatus.CREATED);
 //  }
 
-  @GetMapping("/posts/{id}/comments")
-  public ResponseEntity<List<CommentResponseDTO>> getAllCommentsByIds(@PathVariable long id) {
-    List<CommentResponseDTO> commentResponseDTO = commentService.getAllComment(id);
-    return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
-  }
+//  @GetMapping("/posts/{id}/comments")
+//  public ResponseEntity<List<CommentResponseDTO>> getAllCommentsByIds(@PathVariable long id) {
+//    List<CommentResponseDTO> commentResponseDTO = commentService.getAllComment(id);
+//    return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
+//  }
 
 //  @GetMapping("/posts/{id}/comments/{commentId}")
 //  public ResponseEntity<CommentResponseDTO> getCommentByIds(
@@ -40,20 +35,20 @@ public class CommentController {
 //    return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
 //  }
 
-  @PutMapping("/posts/{id}/comments/{commentId}")
-  public ResponseEntity<CommentResponseDTO> updateComment(
-      @PathVariable("id") long postId,
-      @PathVariable("commentId") long commentId,
-      @RequestBody CommentRequestDTO commentRequestDTO) {
-    CommentResponseDTO commentResponseDTO =
-        commentService.updateCommentById(commentId, commentRequestDTO);
-    return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
-  }
+//  @PutMapping("/posts/{id}/comments/{commentId}")
+//  public ResponseEntity<CommentResponseDTO> updateComment(
+//      @PathVariable("id") long postId,
+//      @PathVariable("commentId") long commentId,
+//      @RequestBody CommentRequestDTO commentRequestDTO) {
+//    CommentResponseDTO commentResponseDTO =
+//        commentService.updateCommentById(commentId, commentRequestDTO);
+//    return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
+//  }
 
-  @DeleteMapping("/posts/{id}/comments/{commentId}")
-  public ResponseEntity<CommentResponseDTO> deleteComment(
-      @PathVariable("id") long postId, @PathVariable("commentId") long commentId) {
-    CommentResponseDTO commentResponseDTO = commentService.deleteCommentById(commentId);
-    return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
-  }
+//  @DeleteMapping("/posts/{id}/comments/{commentId}")
+//  public ResponseEntity<CommentResponseDTO> deleteComment(
+//      @PathVariable("id") long postId, @PathVariable("commentId") long commentId) {
+//    CommentResponseDTO commentResponseDTO = commentService.deleteCommentById(commentId);
+//    return new ResponseEntity<>(commentResponseDTO, HttpStatus.OK);
+//  }
 }

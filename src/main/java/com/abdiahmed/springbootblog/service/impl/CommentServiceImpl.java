@@ -2,11 +2,9 @@ package com.abdiahmed.springbootblog.service.impl;
 
 import com.abdiahmed.springbootblog.error.ResourceNotFoundException;
 import com.abdiahmed.springbootblog.model.Comment;
-import com.abdiahmed.springbootblog.payload.requestDTO.CommentRequestDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.CommentResponseDTO;
 import com.abdiahmed.springbootblog.repository.CommentRepository;
 import com.abdiahmed.springbootblog.service.interfaces.CommentService;
-// import org.modelmapper.ModelMapper;
 import com.abdiahmed.springbootblog.service.mapper.CommentMapperImpl;
 import org.springframework.stereotype.Service;
 
@@ -40,19 +38,17 @@ public class CommentServiceImpl implements CommentService {
 
 
 
-  @Override
-  public CommentResponseDTO updateCommentById(long commentId, CommentRequestDTO commentRequestDTO) {
-    Comment comment = findCommentByIdInternal(commentId);
-    comment.setComment(comment.getComment());
-    commentRepository.save(comment);
-    return commentMapper.mapToDTO(comment);
-  }
+//  @Override
+//  public Comment updateCommentById(long commentId, CommentRequestDTO commentRequestDTO) {
+//    Comment comment = findCommentByIdInternal(commentId);
+//    comment.setComment(comment.getComment());
+//    return commentRepository.save(comment);
+//  }
 
   @Override
-  public CommentResponseDTO deleteCommentById(long commentId) {
+  public void deleteCommentById(long commentId) {
     Comment comment = findCommentByIdInternal(commentId);
     commentRepository.delete(comment);
-    return commentMapper.mapToDTO(comment);
   }
 
   public Comment findCommentByIdInternal(long commentId) {
