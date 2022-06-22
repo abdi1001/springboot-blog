@@ -7,22 +7,22 @@ import com.abdiahmed.springbootblog.payload.responseDTO.PageablePostDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PostResponseDTO;
 
 public interface PostService {
-    PostResponseDTO createPost(CreatePostDTO createPostDTO);
-    PageablePostDTO getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir);
-    PostResponseDTO getPostById(long id);
-    PostResponseDTO updatePost(long id, CreatePostDTO createPostDTO);
-    void deletePost(long id);
+  PostResponseDTO createPost(CreatePostDTO createPostDTO);
 
+  PageablePostDTO getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir);
 
-    PostResponseDTO addCommentToPost(long postId, CommentRequestDTO commentRequestDTO);
+  PostResponseDTO getPostById(long id);
 
-//    PostResponseDTO addCommentToPost(long postId, long commentId);
+  PostResponseDTO updatePost(long id, CreatePostDTO createPostDTO);
 
-//    PostResponseDTO updateCommentOnPost(long postId, CommentRequestDTO commentRequestDTO);
+  void deletePost(long id);
 
-    PostResponseDTO updateCommentOnPost(long postId, long commentId, CommentRequestDTO commentRequestDTO);
+  PostResponseDTO addCommentToPost(long postId, CommentRequestDTO commentRequestDTO);
 
-    CommentResponseDTO findCommentInPost(long postId, long commentId);
+  PostResponseDTO updateCommentOnPost(
+      long postId, long commentId, CommentRequestDTO commentRequestDTO);
 
-    PostResponseDTO deleteCommentInPost(long postId, long commentId);
+  CommentResponseDTO findCommentInPost(long postId, long commentId);
+
+  PostResponseDTO deleteCommentInPost(long postId, long commentId);
 }

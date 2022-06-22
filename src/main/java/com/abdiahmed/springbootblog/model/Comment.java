@@ -13,13 +13,15 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "comment")
 public class Comment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String username;
-    private String comment;
-    @ManyToOne()
-    @JoinColumn(name = "post_id",referencedColumnName = "id")
-    @JsonIgnore
-    private Post post;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  private String username;
+  private String comment;
+
+  @ManyToOne()
+  @JoinColumn(name = "post_id", referencedColumnName = "id")
+  @JsonIgnore
+  private Post post;
 }

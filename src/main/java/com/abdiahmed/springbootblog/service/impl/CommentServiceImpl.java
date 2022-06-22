@@ -14,19 +14,12 @@ import java.util.stream.Collectors;
 @Service
 public class CommentServiceImpl implements CommentService {
 
-//  final PostServiceImpl postService;
-
   final CommentRepository commentRepository;
-  //  ModelMapper modelMapper;
   final CommentMapperImpl commentMapper;
 
-  public CommentServiceImpl(
-//      PostServiceImpl postService,
-      CommentRepository commentRepository,
-      CommentMapperImpl commentMapper) {
+  public CommentServiceImpl(CommentRepository commentRepository, CommentMapperImpl commentMapper) {
     this.commentRepository = commentRepository;
     this.commentMapper = commentMapper;
-    //    this.modelMapper = modelMapper;
   }
 
   @Override
@@ -36,26 +29,9 @@ public class CommentServiceImpl implements CommentService {
     return postComment.stream().map(commentMapper::mapToDTO).collect(Collectors.toList());
   }
 
-
-
-//  @Override
-//  public Comment updateCommentById(long commentId, CommentRequestDTO commentRequestDTO) {
-//    Comment comment = findCommentByIdInternal(commentId);
-//    comment.setComment(comment.getComment());
-//    return commentRepository.save(comment);
-//  }
-
-  @Override
-  public void deleteCommentById(long commentId) {
-    Comment comment = findCommentByIdInternal(commentId);
-    commentRepository.delete(comment);
-  }
-
   public Comment findCommentByIdInternal(long commentId) {
     return commentRepository
-            .findById(commentId)
-            .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+        .findById(commentId)
+        .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
   }
-
-
 }

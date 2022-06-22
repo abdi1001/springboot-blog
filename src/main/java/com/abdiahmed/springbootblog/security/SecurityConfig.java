@@ -20,30 +20,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-
-
-  //  @Bean
-  //  public JWTAuthEntryPoint jwtAuthEntryPoint() {
-  //    return new JWTAuthEntryPoint();
-  //  }
-
+  @Autowired CustomUserDetailService userService;
+  @Autowired JwtTokenProvider jwtTokenProvider;
   @Autowired private JWTAuthEntryPoint jwtAuthEntryPoint;
   @Autowired private AccessDeniedHandlerJwt accessDeniedHandlerJwt;
   @Autowired private JwtAuthFilter jwtAuthFilter;
-  @Autowired
-  CustomUserDetailService userService;
-  @Autowired
-  JwtTokenProvider jwtTokenProvider;
-
-//  @Bean
-//  public JwtAuthFilter jwtAuthFilter() {
-//    return new JwtAuthFilter();
-//  }
-
-//  @Bean
-//  public JwtTokenProvider jwtTokenProvider() {
-//    return new JwtTokenProvider(userService);
-//  }
 
   @Bean
   public AuthenticationManager authenticationManager(
@@ -62,14 +43,14 @@ public class SecurityConfig {
             .disable()
             .exceptionHandling()
             .authenticationEntryPoint(jwtAuthEntryPoint)
-                .accessDeniedHandler(accessDeniedHandlerJwt)
+            .accessDeniedHandler(accessDeniedHandlerJwt)
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-//            .antMatchers("/api/v1/**")
-//            .permitAll()
+            //            .antMatchers("/api/v1/**")
+            //            .permitAll()
             .antMatchers("/api/v1/auth/**")
             .permitAll()
             .antMatchers("/api/v1/posts/1/comments")

@@ -10,8 +10,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 @Mapper(componentModel = "spring", imports = SecurityContextHolder.class)
 public interface CommentMapper {
-    @Mapping(target = "username",expression = "java(SecurityContextHolder.getContext().getAuthentication().getName())")
-    Comment mapToEntity(CommentRequestDTO commentRequestDTO);
-    @InheritInverseConfiguration
-    CommentResponseDTO mapToDTO(Comment comment);
+  @Mapping(
+      target = "username",
+      expression = "java(SecurityContextHolder.getContext().getAuthentication().getName())")
+  Comment mapToEntity(CommentRequestDTO commentRequestDTO);
+
+  @InheritInverseConfiguration
+  CommentResponseDTO mapToDTO(Comment comment);
 }

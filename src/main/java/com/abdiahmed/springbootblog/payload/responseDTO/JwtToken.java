@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JwtToken {
-    private String header = "Bearer";
-    private String token;
+  private String header = "Bearer";
+  private String token;
 
-    public JwtToken(String token) {
-        this.token =token;
-    }
+  public JwtToken(String token) {
+    this.token = token;
+  }
 }

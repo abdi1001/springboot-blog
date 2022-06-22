@@ -8,13 +8,13 @@ import java.util.Date;
 @Getter
 @Setter
 public class ErrorDetails {
-    private String message;
-    private String details;
-    private Date time;
+  private String message;
+  private String details;
+  private Date time;
 
-    public ErrorDetails(String message, String details) {
-        this.message = message;
-        this.details = details;
-        this.time = new Date();
-    }
+  public ErrorDetails(String message, String details) {
+    this.message = message;
+    this.details = details;
+    this.time = new Date();
+  }
 }

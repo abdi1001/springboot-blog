@@ -2,7 +2,6 @@ package com.abdiahmed.springbootblog.service.impl;
 
 import com.abdiahmed.springbootblog.error.ResourceExist;
 import com.abdiahmed.springbootblog.error.ResourceNotFoundException;
-import com.abdiahmed.springbootblog.model.Authorities;
 import com.abdiahmed.springbootblog.model.Role;
 import com.abdiahmed.springbootblog.model.User;
 import com.abdiahmed.springbootblog.payload.requestDTO.*;
@@ -12,7 +11,6 @@ import com.abdiahmed.springbootblog.payload.responseDTO.UserResponseDTO;
 import com.abdiahmed.springbootblog.repository.UserRepository;
 import com.abdiahmed.springbootblog.security.JwtTokenProvider;
 import com.abdiahmed.springbootblog.service.interfaces.UserService;
-// import org.modelmapper.ModelMapper;ModelMapper
 import com.abdiahmed.springbootblog.service.mapper.UserMapperImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +22,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,81 +68,54 @@ public class UserServiceImpl implements UserService {
     if (userRepo.count() == 0) {
 
       Role adminRole = roleService.createRole("ROLE_ADMIN");
+      Role userRole = roleService.createRole("ROLE_USER");
 
-      List<Authorities> authoritiesList = new ArrayList<>();
+      List<CreateAuthoritiesDTO> adminAuthoritiesList =
+          List.of(
+              CreateAuthoritiesDTO.builder().name("User:Create").build(),
+              CreateAuthoritiesDTO.builder().name("User:Read").build(),
+              CreateAuthoritiesDTO.builder().name("User:Update").build(),
+              CreateAuthoritiesDTO.builder().name("User:Delete").build());
 
-      Authorities authorities1 = authoritiesService.createAuthority("User:Read");
-      authoritiesService.addRole(authorities1.getId(), adminRole);
+      roleService.addAuthoritiesToRole(adminRole.getId(), adminAuthoritiesList);
 
-      Authorities authorities2 = authoritiesService.createAuthority("User:Create");
-      authoritiesService.addRole(authorities2.getId(), adminRole);
+      CreateAuthoritiesDTO userAuthoritiesList =
+          CreateAuthoritiesDTO.builder().name("User:Read").build();
 
-      Authorities authorities3 = authoritiesService.createAuthority("User:Update");
-      authoritiesService.addRole(authorities3.getId(), adminRole);
+      roleService.addAuthorityToRole(userRole.getId(), userAuthoritiesList);
 
-      Authorities authorities4 = authoritiesService.createAuthority("User:Delete");
-      authoritiesService.addRole(authorities4.getId(), adminRole);
-
-      authoritiesList.add(authorities1);
-      authoritiesList.add(authorities2);
-      authoritiesList.add(authorities3);
-      authoritiesList.add(authorities4);
-
-      List<Authorities> mySavedAuthorities =
-          authoritiesService.SaveAuthoritiesList(authoritiesList);
-
-      for (Authorities authority : mySavedAuthorities) {
-        adminRole.addAuthority(authority);
-      }
-      Role savedRole = roleService.saveRole(adminRole);
-
-      User myUser =
-          User.builder()
-              .name(user.getName())
-              .username(user.getUsername())
-              .email(user.getEmail())
-              .password(passwordEncoder.encode(user.getPassword()))
-              .role(Collections.singleton(savedRole))
-              .isAccountNonExpired(true)
-              .isAccountNonLocked(true)
-              .isCredentialsNonExpired(true)
-              .isEnabled(true)
-              .build();
-      User savedUser = userRepo.save(myUser);
-      return mapToDTO(savedUser);
+      return getUserResponseDTO(user, adminRole);
 
     } else {
       Role userRole;
-      if (roleService.roleDoesNotExist("ROLE_USER")) {
-        Role newUserRole = roleService.createRole("ROLE_USER");
-
-        Authorities authorities = authoritiesService.findAuthorityByName("User:Read");
-        authorities.addRoleToAuthorities(newUserRole);
-
-        authorities = authoritiesService.saveAuthority(authorities);
-        newUserRole.addAuthority(authorities);
-        userRole = roleService.saveRole(newUserRole);
-
-      } else {
-        userRole = roleService.getRoleByName("ROLE_USER");
+      if (roleService.roleDoesNotExists("ROLE_USER")) {
+        userRole = roleService.createRole("ROLE_USER");
+        CreateAuthoritiesDTO userAuthoritiesList =
+            CreateAuthoritiesDTO.builder().name("User:Read").build();
+        roleService.addAuthorityToRole(userRole.getId(), userAuthoritiesList);
       }
+      userRole = roleService.getRoleByName("ROLE_USER");
 
-      User myUser =
-          User.builder()
-              .name(user.getName())
-              .username(user.getUsername())
-              .email(user.getEmail())
-              .password(passwordEncoder.encode(user.getPassword()))
-              .role(Collections.singleton(userRole))
-              .isAccountNonExpired(true)
-              .isAccountNonLocked(true)
-              .isCredentialsNonExpired(true)
-              .isEnabled(true)
-              .build();
-      //      myUser.addRoleToUser(userRole);
-      User savedUser = userRepo.save(myUser);
-      return mapToDTO(savedUser);
+      return getUserResponseDTO(user, userRole);
     }
+  }
+
+  private UserResponseDTO getUserResponseDTO(RegisterDTO user, Role userRole) {
+    User myUser =
+        User.builder()
+            .name(user.getName())
+            .username(user.getUsername())
+            .email(user.getEmail())
+            .password(passwordEncoder.encode(user.getPassword()))
+            .role(Set.of(userRole))
+            .isAccountNonExpired(true)
+            .isAccountNonLocked(true)
+            .isCredentialsNonExpired(true)
+            .isEnabled(true)
+            .build();
+
+    User savedUser = userRepo.save(myUser);
+    return mapToDTO(savedUser);
   }
 
   private UserResponseDTO mapToDTO(User savedUser) {
@@ -233,6 +207,39 @@ public class UserServiceImpl implements UserService {
     return pageableUserDTO;
   }
 
+  public UserResponseDTO addRoleToUser(long userId, CreateRoleDTO createRoleDTO) {
+    Role foundRole = roleService.getRoleByName(createRoleDTO.getName());
+    User foundUser = getUserByIdInternal(userId);
+    foundUser
+        .getRole()
+        .forEach(
+            role -> {
+              if (role.getName().equalsIgnoreCase(createRoleDTO.getName())) {
+                throw new ResourceExist("User already has the role " + createRoleDTO.getName());
+              }
+            });
+    foundUser.addRoleToUser(foundRole);
+    User saveUser = userRepo.save(foundUser);
+    return userMapper.mapToDTO(saveUser);
+  }
+
+  public UserResponseDTO removeRoleFromUser(long userId, long roleId) {
+    Role foundRole = roleService.getRoleById(roleId);
+    User foundUser = getUserByIdInternal(userId);
+    foundUser.removeRoleFromUser(foundRole);
+    User saveUser = userRepo.save(foundUser);
+    return userMapper.mapToDTO(saveUser);
+  }
+
+  public String removeRoleFromAllUsers(long roleId) {
+    Role foundRole = roleService.getRoleById(roleId);
+    List<User> users = foundRole.getUsers();
+    users.forEach(user -> user.removeRoleFromUser(foundRole));
+    List<User> updatedUserList = userRepo.saveAll(users);
+
+    return "Role removed from all users";
+  }
+
   @Override
   public UserResponseDTO getUserById(long id) {
     User user =
@@ -240,9 +247,14 @@ public class UserServiceImpl implements UserService {
     return mapToDTO(user);
   }
 
+  public User getUserByIdInternal(long id) {
+    return userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+  }
+
   @Override
-  public User updateUser(long id, User user) {
-    return null;
+  public User updateUser(long userId, User user) {
+    User foundUser = getUserByIdInternal(userId);
+  return foundUser;
   }
 
   @Override

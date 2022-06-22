@@ -20,6 +20,14 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
   }
 
+  @ExceptionHandler(UpdateResourceException.class)
+  public ResponseEntity<ErrorDetails> updateResourceException(
+      UpdateResourceException exception, WebRequest request) {
+    ErrorDetails errorDetails =
+        new ErrorDetails(exception.getMessage(), request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+  }
+
   @ExceptionHandler(BlogAPIException.class)
   public ResponseEntity<ErrorDetails> blogAPIExceptionException(
       BlogAPIException exception, WebRequest request) {
@@ -30,34 +38,40 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(ResourceExist.class)
-  public ResponseEntity<ErrorDetails> resourceExist(
-          ResourceExist exception, WebRequest request) {
+  public ResponseEntity<ErrorDetails> resourceExist(ResourceExist exception, WebRequest request) {
     ErrorDetails errorDetails =
-            new ErrorDetails(exception.getMessage(), request.getDescription(false));
+        new ErrorDetails(exception.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
   }
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<ErrorDetails> exception(
-          Exception exception, WebRequest request) {
+  @ExceptionHandler(RuntimeException.class)
+  public ResponseEntity<ErrorDetails> runtimeException(
+      RuntimeException exception, WebRequest request) {
     ErrorDetails errorDetails =
-            new ErrorDetails(exception.getMessage(), request.getDescription(false));
+        new ErrorDetails(exception.getMessage(), request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorDetails> exception(Exception exception, WebRequest request) {
+    ErrorDetails errorDetails =
+        new ErrorDetails(exception.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   @ExceptionHandler(SignatureException.class)
   public ResponseEntity<ErrorDetails> signatureException(
-          SignatureException exception, WebRequest request) {
+      SignatureException exception, WebRequest request) {
     ErrorDetails errorDetails =
-            new ErrorDetails(exception.getMessage(), request.getDescription(false));
+        new ErrorDetails(exception.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(InsufficientAuthenticationException.class)
   public ResponseEntity<ErrorDetails> insufficientAuthenticationException(
-          InsufficientAuthenticationException exception, WebRequest request) {
+      InsufficientAuthenticationException exception, WebRequest request) {
     ErrorDetails errorDetails =
-            new ErrorDetails(exception.getMessage(), request.getDescription(false));
+        new ErrorDetails(exception.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 }

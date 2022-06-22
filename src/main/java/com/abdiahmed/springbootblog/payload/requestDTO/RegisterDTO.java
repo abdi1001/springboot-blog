@@ -11,9 +11,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterDTO {
-    private String name;
-    private String username;
-    private String email;
-    private String password;
-    private Set<RoleResponseDTO> roles;
+  private String name;
+  private String username;
+  private String email;
+  private String password;
+  private Set<RoleResponseDTO> roles;
 }

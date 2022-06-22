@@ -8,12 +8,18 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-@Mapper(componentModel = "spring",imports = SecurityContextHolder.class)
+@Mapper(componentModel = "spring", imports = SecurityContextHolder.class)
 public interface PostMapper {
-    @Mapping(target = "username",expression = "java(SecurityContextHolder.getContext().getAuthentication().getName())")
-    Post mapToEntity(CreatePostDTO createPostDTO);
-    @InheritInverseConfiguration
-    PostResponseDTO mapToDTO(Post post);
-    @Mapping(target = "username",expression = "java(SecurityContextHolder.getContext().getAuthentication().getName())")
-    PostResponseDTO mapToDTO(CreatePostDTO post);
+  @Mapping(
+      target = "username",
+      expression = "java(SecurityContextHolder.getContext().getAuthentication().getName())")
+  Post mapToEntity(CreatePostDTO createPostDTO);
+
+  @InheritInverseConfiguration
+  PostResponseDTO mapToDTO(Post post);
+
+  @Mapping(
+      target = "username",
+      expression = "java(SecurityContextHolder.getContext().getAuthentication().getName())")
+  PostResponseDTO mapToDTO(CreatePostDTO post);
 }

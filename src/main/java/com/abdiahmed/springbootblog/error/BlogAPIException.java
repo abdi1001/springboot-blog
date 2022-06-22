@@ -9,26 +9,26 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BlogAPIException extends RuntimeException {
-    private String message;
-    private HttpStatus status;
+  private String message;
+  private HttpStatus status;
 
-    public BlogAPIException(String message) {
-        super(message);
-        this.message = message;
-    }
+  public BlogAPIException(String message) {
+    super(message);
+    this.message = message;
+  }
 
-    public BlogAPIException(HttpStatus badRequest, String message) {
-        super(message);
-        this.message = message;
-        this.status = badRequest;
-    }
+  public BlogAPIException(HttpStatus badRequest, String message) {
+    super(message);
+    this.message = message;
+    this.status = badRequest;
+  }
 
-    public HttpStatus getStatus() {
-        return status;
-    }
+  public HttpStatus getStatus() {
+    return status;
+  }
 
-    @Override
-    public String getMessage() {
-        return message;
-    }
+  @Override
+  public String getMessage() {
+    return message;
+  }
 }

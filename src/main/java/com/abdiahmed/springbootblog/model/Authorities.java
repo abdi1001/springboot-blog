@@ -1,10 +1,7 @@
 package com.abdiahmed.springbootblog.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -13,24 +10,26 @@ import java.util.Set;
 @Entity
 @Setter
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "my_authorities")
 public class Authorities {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    @ManyToMany(mappedBy = "authorities",cascade = CascadeType.DETACH)
-    @JsonIgnore
-    private Set<Role> role = new HashSet<>();
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    public void addRoleToAuthorities(Role roleInput) {
-        role.add(roleInput);
-    }
+  private String name;
 
-    public void removeRoleToAuthorities(Role roleInput) {
-        role.remove(roleInput);
-    }
+  @ManyToMany(mappedBy = "authorities")
+  @JsonIgnore
+  private Set<Role> role = new HashSet<>();
 
+  public void addRoleToAuthorities(Role roleInput) {
+    role.add(roleInput);
+  }
+
+  public void removeRoleToAuthorities(Role roleInput) {
+    role.remove(roleInput);
+  }
 }

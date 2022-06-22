@@ -10,18 +10,23 @@ import com.abdiahmed.springbootblog.payload.responseDTO.PageableUserDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.UserResponseDTO;
 
 public interface UserService {
-    UserResponseDTO registerUser(RegisterDTO registerDTO) throws ResourceExist;
-    JwtToken signInUser(SignInDTO signInDTO);
+  UserResponseDTO registerUser(RegisterDTO registerDTO) throws ResourceExist;
 
-    User findByName(String name);
+  JwtToken signInUser(SignInDTO signInDTO);
 
-    long countUsers();
+  User findByName(String name);
 
-    User saveUser(User user);
+  long countUsers();
 
-    UserResponseDTO createUser(CreateUserDTO createUserDTO);
-    PageableUserDTO getAllUsers(int pageNo, int pageSize, String sortBy, String sortDir);
-    UserResponseDTO getUserById(long id);
-    User updateUser(long id, User user);
-    void deleteUser(long id);
+  User saveUser(User user);
+
+  UserResponseDTO createUser(CreateUserDTO createUserDTO);
+
+  PageableUserDTO getAllUsers(int pageNo, int pageSize, String sortBy, String sortDir);
+
+  UserResponseDTO getUserById(long id);
+
+  User updateUser(long userId, User user);
+
+  void deleteUser(long id);
 }

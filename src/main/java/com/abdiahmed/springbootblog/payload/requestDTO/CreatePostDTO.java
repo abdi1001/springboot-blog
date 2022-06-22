@@ -1,6 +1,9 @@
 package com.abdiahmed.springbootblog.payload.requestDTO;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -8,6 +11,6 @@ import lombok.*;
 @NoArgsConstructor
 public class CreatePostDTO {
 
-    private String title;
-    private String body;
+  private String title;
+  private String body;
 }

@@ -8,8 +8,10 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
-    Role mapToEntity(RoleResponseDTO roleResponseDTO);
-    RoleResponseDTO mapToDTO(Role role);
-    @Mapping(source = "name", target = "name")
-    RoleResponseDTO mapToDTO(CreateRoleDTO role);
+  Role mapToEntity(RoleResponseDTO roleResponseDTO);
+
+  RoleResponseDTO mapToDTO(Role role);
+
+  @Mapping(source = "name", target = "name")
+  RoleResponseDTO mapToDTO(CreateRoleDTO role);
 }

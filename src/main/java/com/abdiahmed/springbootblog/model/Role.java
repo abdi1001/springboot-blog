@@ -16,30 +16,37 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "my_roles")
-public class Role {
+public class  Role {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
   private String name;
+
   @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinTable(
-          name = "role_authorities",
-          joinColumns = @JoinColumn(name = "role_id"),
-          inverseJoinColumns = @JoinColumn(name = "authorities_id_id"))
+      name = "role_authorities",
+      joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
+      inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
   private List<Authorities> authorities = new ArrayList<>();
+
   @JsonIgnore
-  @ManyToMany(mappedBy = "role",cascade = CascadeType.MERGE)
+  @ManyToMany(mappedBy = "role", cascade = CascadeType.REMOVE)
   private List<User> users = new ArrayList<>();
 
   public void addAuthority(Authorities authority) {
     authorities.add(authority);
   }
+
   public void removeAuthority(Authorities authority) {
     authorities.remove(authority);
   }
 
   public void addUser(User user) {
-      users.add(user);}
+    users.add(user);
+  }
+
   public void removeUser(User user) {
-      users.remove(user);}
+    users.remove(user);
+  }
 }

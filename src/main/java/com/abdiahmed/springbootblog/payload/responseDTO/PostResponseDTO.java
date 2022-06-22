@@ -11,9 +11,9 @@ import java.util.Set;
 @Builder
 public class PostResponseDTO {
 
-    private Long id;
-    private String username;
-    private String title;
-    private String body;
-    private Set<CommentResponseDTO> comments;
+  private Long id;
+  private String username;
+  private String title;
+  private String body;
+  private Set<CommentResponseDTO> comments;
 }

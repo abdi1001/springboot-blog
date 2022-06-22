@@ -13,12 +13,12 @@ import java.util.Set;
 @Builder
 public class UserResponseDTO {
 
-    private long id;
-    private String name;
-    private String email;
-    private Set<RoleResponseDTO> role;
-    private boolean enabled;
-    private boolean accountNonExpired;
-    private boolean credentialsNonExpired;
-    private boolean accountNonLocked;
+  private long id;
+  private String name;
+  private String email;
+  private Set<RoleResponseDTO> role;
+  private boolean enabled;
+  private boolean accountNonExpired;
+  private boolean credentialsNonExpired;
+  private boolean accountNonLocked;
 }

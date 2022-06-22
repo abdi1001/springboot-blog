@@ -16,26 +16,29 @@ import java.util.Set;
 @Table(name = "post")
 public class Post {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String username;
-    private String title;
-    private String body;
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private Set<Comment> comments = new HashSet<>();
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @JoinColumn(name = "user_id",referencedColumnName = "id")
-    private User user;
+  private String username;
+  private String title;
+  private String body;
 
-    public void addComment(Comment comment) {
-        comments.add(comment);
-    }
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<Comment> comments = new HashSet<>();
 
-    public void deleteComment(Comment comment) {
-        comments.remove(comment);
-    }
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", referencedColumnName = "id")
+  @JsonIgnore
+  private User user;
 
+  public void addComment(Comment comment) {
+    comments.add(comment);
+    comment.setPost(this);
+  }
+
+  public void deleteComment(Comment comment) {
+    comments.remove(comment);
+    comment.setPost(null);
+  }
 }

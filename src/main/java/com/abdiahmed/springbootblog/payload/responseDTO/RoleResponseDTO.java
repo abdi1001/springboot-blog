@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 public class RoleResponseDTO {
 
-    private Long id;
-    private String name;
-    private List<AuthoritiesResponseDTO> authorities = new ArrayList<>();
+  private Long id;
+  private String name;
+  private List<AuthoritiesResponseDTO> authorities = new ArrayList<>();
 }

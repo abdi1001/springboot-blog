@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth/")
 public class AuthController {
 
-  @Autowired
-  UserServiceImpl myUserService;
+  @Autowired UserServiceImpl myUserService;
 
   @PostMapping("/register")
-  public ResponseEntity<UserResponseDTO> myUser(@RequestBody RegisterDTO registerDTO) throws ResourceExist {
+  public ResponseEntity<UserResponseDTO> myUser(@RequestBody RegisterDTO registerDTO)
+      throws ResourceExist {
     UserResponseDTO user = myUserService.registerUser(registerDTO);
     return new ResponseEntity<>(user, HttpStatus.CREATED);
   }
@@ -32,6 +32,4 @@ public class AuthController {
     JwtToken token = myUserService.signInUser(signInDTO);
     return new ResponseEntity<>(token, HttpStatus.CREATED);
   }
-
-
 }

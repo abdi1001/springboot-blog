@@ -1,30 +1,37 @@
 package com.abdiahmed.springbootblog.service.interfaces;
 
 import com.abdiahmed.springbootblog.error.ResourceExist;
+import com.abdiahmed.springbootblog.error.UpdateResourceException;
 import com.abdiahmed.springbootblog.model.Role;
+import com.abdiahmed.springbootblog.payload.requestDTO.CreateAuthoritiesDTO;
+import com.abdiahmed.springbootblog.payload.responseDTO.AuthoritiesResponseDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.RoleResponseDTO;
 
 import java.util.List;
 
 public interface RoleService {
-    List<Role> getAllRoles();
+  List<Role> getAllRoles();
 
-    Role getRoleById(long id);
+  Role getRoleById(long id);
 
-    Role createRole(String role) throws ResourceExist;
+  boolean roleDoesNotExists(String name);
 
-    Role updateRole(long id, String role);
+  Role createRole(String role) throws ResourceExist;
 
-    Role deleteRole(long id);
+  Role updateRole(long id, String role);
 
-    RoleResponseDTO deleteRoleAuthority(long roleId, long authoritiesId);
+  Role deleteRole(long id);
 
-    Role addAuthorityToRole(long id, long authorityId);
+  Role getRoleByName(String name);
 
-    Role getRoleByName(String name);
-    boolean roleDoesNotExist(String name);
+  RoleResponseDTO addAuthorityToRole(long roleId, CreateAuthoritiesDTO createAuthoritiesDTO);
 
-    Role saveRole(Role role);
+  RoleResponseDTO addAuthoritiesToRole(
+      long roleId, List<CreateAuthoritiesDTO> createAuthoritiesDTO);
 
+  RoleResponseDTO updateAuthorityOnRole(
+      long roleId, long authorityId, AuthoritiesResponseDTO authoritiesResponseDTO)
+      throws UpdateResourceException;
+
+  RoleResponseDTO deleteAuthorityFromRole(long roleId, long authorityId);
 }
-

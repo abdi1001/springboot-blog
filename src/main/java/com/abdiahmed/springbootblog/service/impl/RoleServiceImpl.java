@@ -2,17 +2,22 @@ package com.abdiahmed.springbootblog.service.impl;
 
 import com.abdiahmed.springbootblog.error.ResourceExist;
 import com.abdiahmed.springbootblog.error.ResourceNotFoundException;
+import com.abdiahmed.springbootblog.error.UpdateResourceException;
 import com.abdiahmed.springbootblog.model.Authorities;
 import com.abdiahmed.springbootblog.model.Role;
+import com.abdiahmed.springbootblog.payload.requestDTO.CreateAuthoritiesDTO;
+import com.abdiahmed.springbootblog.payload.responseDTO.AuthoritiesResponseDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.RoleResponseDTO;
 import com.abdiahmed.springbootblog.repository.RoleRepository;
 import com.abdiahmed.springbootblog.service.interfaces.RoleService;
+import com.abdiahmed.springbootblog.service.mapper.AuthoritiesMapperImpl;
 import com.abdiahmed.springbootblog.service.mapper.RoleMapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -20,6 +25,7 @@ public class RoleServiceImpl implements RoleService {
   @Autowired AuthoritiesServiceImpl authoritiesService;
 
   @Autowired RoleMapperImpl roleMapper;
+  @Autowired AuthoritiesMapperImpl authoritiesMapper;
 
   @Override
   public List<Role> getAllRoles() {
@@ -39,13 +45,8 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  public boolean roleDoesNotExist(String name) {
+  public boolean roleDoesNotExists(String name) {
     return roleRepo.findByName(name).isEmpty();
-  }
-
-  @Override
-  public Role saveRole(Role role) {
-    return roleRepo.save(role);
   }
 
   @Override
@@ -68,33 +69,90 @@ public class RoleServiceImpl implements RoleService {
   @Override
   public Role deleteRole(long id) {
     Role deleteRole = getRoleById(id);
+    deleteRole.getUsers().forEach(user -> {
+      if(user.getRole().contains(deleteRole)){
+        user.removeRoleFromUser(deleteRole);
+      }
+    });
+//    deleteRole.setUsers(Collections.emptyList());
+    deleteRole.setUsers(Collections.emptyList());
+    deleteRole.setAuthorities(Collections.emptyList());
     roleRepo.delete(deleteRole);
     return deleteRole;
   }
 
   @Override
-  public RoleResponseDTO deleteRoleAuthority(long roleId, long authoritiesId) {
+  public RoleResponseDTO addAuthorityToRole(
+      long roleId, CreateAuthoritiesDTO createAuthoritiesDTO) {
     Role role = getRoleById(roleId);
-    Authorities deleteAuthority = authoritiesService.getAuthorityById(authoritiesId);
-    List<Authorities> collect =
-        role.getAuthorities().stream()
-            .filter(authorities -> authorities == deleteAuthority)
-            .collect(Collectors.toList());
-    Authorities authorities = collect.get(0);
-    if (authorities != null) {
-      role.removeAuthority(authorities);
-      roleRepo.save(role);
+    role.getAuthorities().stream()
+        .filter(
+            authorities -> Objects.equals(authorities.getName(), createAuthoritiesDTO.getName()))
+        .findFirst()
+        .ifPresent(
+            (s) -> {
+              throw new ResourceExist("This role already has the authority: " + s.getName());
+            });
+    boolean authorityExists = authoritiesService.authorityExists(createAuthoritiesDTO.getName());
+    Authorities authority;
+    if(authorityExists){
+      authority = authoritiesService.findByName(createAuthoritiesDTO.getName());
+    } else {
+    authority = authoritiesMapper.mapToEntity(createAuthoritiesDTO);
     }
-
+    role.addAuthority(authority);
+    roleRepo.save(role);
     return roleMapper.mapToDTO(role);
   }
 
-  public Role addAuthorityToRole(long roleId, long authorityId) {
-    Authorities authority = authoritiesService.getAuthorityById(authorityId);
+  @Override
+  public RoleResponseDTO addAuthoritiesToRole(
+      long roleId, List<CreateAuthoritiesDTO> createAuthoritiesDTO) {
     Role role = getRoleById(roleId);
-    role.addAuthority(authority);
-    authority.addRoleToAuthorities(role);
-    authoritiesService.addRole(authorityId, role);
-    return roleRepo.save(role);
+    role.getAuthorities()
+        .forEach(
+            authorities -> {
+              String authorityName = authorities.getName();
+              boolean authorityExists =
+                  createAuthoritiesDTO.stream()
+                      .anyMatch(
+                          authoritiesDTO ->
+                              authoritiesDTO.getName().equalsIgnoreCase(authorityName));
+              if (authorityExists)
+                throw new ResourceExist("authority " + authorityName + "already exists");
+            });
+    List<Authorities> authorities = authoritiesMapper.mapToEntity(createAuthoritiesDTO);
+    authorities.forEach(role::addAuthority);
+    roleRepo.save(role);
+    return roleMapper.mapToDTO(role);
+  }
+
+  @Override
+  public RoleResponseDTO updateAuthorityOnRole(
+      long roleId, long authorityId, AuthoritiesResponseDTO authoritiesResponseDTO)
+      throws UpdateResourceException {
+    Role role = getRoleById(roleId);
+    Authorities authority = validateAuthority(role, authorityId);
+    if (authoritiesResponseDTO.getId() != authorityId) {
+      throw new UpdateResourceException(authorityId, authoritiesResponseDTO.getId());
+    }
+    authority.setName(authoritiesResponseDTO.getName());
+    return roleMapper.mapToDTO(roleRepo.save(role));
+  }
+
+  @Override
+  public RoleResponseDTO deleteAuthorityFromRole(long roleId, long authorityId) {
+    Role role = getRoleById(roleId);
+    Authorities authority = validateAuthority(role, authorityId);
+    role.removeAuthority(authority);
+    roleRepo.save(role);
+    return roleMapper.mapToDTO(role);
+  }
+
+  private Authorities validateAuthority(Role role, long authorityId) {
+    return role.getAuthorities().stream()
+        .filter(authority -> authority.getId() == authorityId)
+        .findFirst()
+        .orElseThrow(() -> new ResourceNotFoundException("This role", "authority Id", authorityId));
   }
 }

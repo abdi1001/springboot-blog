@@ -6,15 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class PageableUserDTO {
-    private List<UserResponseDTO> responseDTOList;
-    private int pageNo;
-    private int pageSize;
-    private int totalPages;
-    private Long totalElements;
-    private boolean isLast;
+  private List<UserResponseDTO> responseDTOList;
+  private int pageNo;
+  private int pageSize;
+  private int totalPages;
+  private Long totalElements;
+  private boolean isLast;
 }

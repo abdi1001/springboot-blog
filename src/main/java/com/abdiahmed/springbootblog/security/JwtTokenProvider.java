@@ -11,16 +11,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+
 @Component
 public class JwtTokenProvider {
+  final CustomUserDetailService userService;
+
   @Value("${app.jwtSecretKey}")
   private String key;
 
   @Value("${app.jwt-expiration-milliseconds}")
   private Long miliseconds;
-
-  final
-  CustomUserDetailService userService;
 
   public JwtTokenProvider(CustomUserDetailService userService) {
     this.userService = userService;

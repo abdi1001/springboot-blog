@@ -20,7 +20,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
   private final JwtTokenProvider jwtTokenProvider;
   private final CustomUserDetailService userService;
 
-  public JwtAuthFilter(JwtTokenProvider jwtTokenProvider,CustomUserDetailService userService) {
+  public JwtAuthFilter(JwtTokenProvider jwtTokenProvider, CustomUserDetailService userService) {
     this.jwtTokenProvider = jwtTokenProvider;
     this.userService = userService;
   }

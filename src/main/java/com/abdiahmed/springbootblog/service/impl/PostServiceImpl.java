@@ -29,7 +29,6 @@ public class PostServiceImpl implements PostService {
 
   PostRepository postRepository;
   UserServiceImpl userService;
-  //    ModelMapper modelMapper;
   PostMapperImpl postMapper;
   CommentMapperImpl commentMapper;
   CommentServiceImpl commentService;
@@ -41,7 +40,6 @@ public class PostServiceImpl implements PostService {
       CommentServiceImpl commentService,
       CommentMapperImpl commentMapper) {
     this.postRepository = postRepository;
-    //        this.modelMapper = modelMapper;
     this.userService = userService;
     this.postMapper = postMapper;
     this.commentMapper = commentMapper;
@@ -113,7 +111,7 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public void deletePost(long id) {
-    Post post = getPostByIdInternal(id);
+    getPostByIdInternal(id);
     postRepository.deleteById(id);
   }
 
@@ -121,7 +119,6 @@ public class PostServiceImpl implements PostService {
   public PostResponseDTO addCommentToPost(long postId, CommentRequestDTO commentRequestDTO) {
     Post post = getPostByIdInternal(postId);
     Comment comment1 = commentMapper.mapToEntity(commentRequestDTO);
-    comment1.setPost(post);
     post.addComment(comment1);
     Post savedPost = postRepository.save(post);
     return postMapper.mapToDTO(savedPost);
@@ -131,13 +128,17 @@ public class PostServiceImpl implements PostService {
   public CommentResponseDTO findCommentInPost(long postId, long commentId) {
     Post post = getPostByIdInternal(postId);
     Comment comment1 = commentService.findCommentByIdInternal(commentId);
-    Optional<Comment> foundComment = post.getComments().stream().filter(comment -> comment == comment1).findFirst();
-    Comment comment = foundComment.orElseThrow(() -> new ResourceNotFoundException("Post", "Comment Id", commentId));
+    Optional<Comment> foundComment =
+        post.getComments().stream().filter(comment -> comment == comment1).findFirst();
+    Comment comment =
+        foundComment.orElseThrow(
+            () -> new ResourceNotFoundException("Post", "Comment Id", commentId));
     return commentMapper.mapToDTO(comment);
   }
 
   @Override
-  public PostResponseDTO updateCommentOnPost(long postId, long commentId, CommentRequestDTO commentRequestDTO) {
+  public PostResponseDTO updateCommentOnPost(
+      long postId, long commentId, CommentRequestDTO commentRequestDTO) {
     Post post = getPostByIdInternal(postId);
     Comment comment1 = commentService.findCommentByIdInternal(commentId);
     comment1.setComment(commentRequestDTO.getComment());
@@ -149,18 +150,8 @@ public class PostServiceImpl implements PostService {
   public PostResponseDTO deleteCommentInPost(long postId, long commentId) {
     Post post = getPostByIdInternal(postId);
     Comment comment1 = commentService.findCommentByIdInternal(commentId);
-//    post.deleteComment(comment1);
-    commentService.deleteCommentById(comment1.getId());
+    post.deleteComment(comment1);
     postRepository.save(post);
     return postMapper.mapToDTO(post);
   }
-
-//  public Comment findCommentByIdInternal(long postId, long commentId) {
-//    Post post = getPostByIdInternal(postId);
-//    Comment comment = commentService.g
-//    if (!post.getId().equals(comment.getPost().getId())) {
-//      throw new BlogAPIException("Comment does not belong to Post");
-//    }
-//    return comment;
-//  }
 }

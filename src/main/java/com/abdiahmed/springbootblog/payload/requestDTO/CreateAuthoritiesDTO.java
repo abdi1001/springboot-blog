@@ -1,12 +1,12 @@
 package com.abdiahmed.springbootblog.payload.requestDTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class CreateAuthoritiesDTO {
-    private String name;
+  private String name;
 }

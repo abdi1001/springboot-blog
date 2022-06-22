@@ -25,25 +25,28 @@ public class User {
   private String email;
   private String password;
 
-  public User() {
-
-  }
-
-  @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
+  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinTable(
       name = "user_role",
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> role = new HashSet<>();
 
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private Set<Post> posts = new HashSet<>();
+
+  private boolean isAccountNonExpired;
+  private boolean isAccountNonLocked;
+  private boolean isCredentialsNonExpired;
+  private boolean isEnabled;
+
+  public User() {}
 
   public void addRoleToUser(Role roleInput) {
     role.add(roleInput);
   }
 
-  public void removeRoleToUser(Role roleInput) {
+  public void removeRoleFromUser(Role roleInput) {
     role.remove(roleInput);
   }
 
@@ -54,13 +57,4 @@ public class User {
   public void removePostForUser(Post post) {
     posts.remove(post);
   }
-
-
-
-  private boolean isAccountNonExpired;
-  private boolean isAccountNonLocked;
-  private boolean isCredentialsNonExpired;
-  private boolean isEnabled;
-
-
 }

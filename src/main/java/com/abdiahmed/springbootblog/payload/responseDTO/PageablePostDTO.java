@@ -12,10 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class PageablePostDTO {
-    private List<PostResponseDTO> responseDTOList;
-    private int pageNo;
-    private int pageSize;
-    private int totalPages;
-    private Long totalElements;
-    private boolean isLast;
+  private List<PostResponseDTO> responseDTOList;
+  private int pageNo;
+  private int pageSize;
+  private int totalPages;
+  private Long totalElements;
+  private boolean isLast;
 }
