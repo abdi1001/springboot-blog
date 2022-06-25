@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -23,16 +23,16 @@ public class  Role {
 
   private String name;
 
-  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
   @JoinTable(
       name = "role_authorities",
-      joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
-      inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
-  private List<Authorities> authorities = new ArrayList<>();
+      joinColumns = @JoinColumn(name = "my_roles_id", referencedColumnName = "id"),
+      inverseJoinColumns = @JoinColumn(name = "my_authorities_id", referencedColumnName = "id"))
+  private Set<Authorities> authorities = new HashSet<>();
 
   @JsonIgnore
-  @ManyToMany(mappedBy = "role", cascade = CascadeType.REMOVE)
-  private List<User> users = new ArrayList<>();
+  @ManyToMany(mappedBy = "role")
+  private Set<User> users = new HashSet<>();
 
   public void addAuthority(Authorities authority) {
     authorities.add(authority);

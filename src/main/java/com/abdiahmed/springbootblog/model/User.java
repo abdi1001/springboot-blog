@@ -28,8 +28,8 @@ public class User {
   @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinTable(
       name = "user_role",
-      joinColumns = @JoinColumn(name = "user_id"),
-      inverseJoinColumns = @JoinColumn(name = "role_id"))
+      joinColumns = @JoinColumn(name = "my_user_id"),
+      inverseJoinColumns = @JoinColumn(name = "my_roles_id"))
   private Set<Role> role = new HashSet<>();
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

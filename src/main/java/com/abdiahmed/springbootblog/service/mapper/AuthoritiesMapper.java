@@ -5,7 +5,7 @@ import com.abdiahmed.springbootblog.payload.requestDTO.CreateAuthoritiesDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.AuthoritiesResponseDTO;
 import org.mapstruct.Mapper;
 
-import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface AuthoritiesMapper {
@@ -15,5 +15,5 @@ public interface AuthoritiesMapper {
   //    AuthoritiesResponseDTO mapToDTO(CreateAuthoritiesDTO authorities);
   Authorities mapToEntity(CreateAuthoritiesDTO authoritiesDTO);
 
-  List<Authorities> mapToEntity(List<CreateAuthoritiesDTO> authoritiesDTO);
+  Set<Authorities> mapToEntity(Set<CreateAuthoritiesDTO> authoritiesDTO);
 }

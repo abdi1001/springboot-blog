@@ -20,15 +20,16 @@ public class Post {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String username;
   private String title;
   private String body;
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Comment> comments = new HashSet<>();
 
+
+
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", referencedColumnName = "id")
+  @JoinColumn(name = "my_user_id", referencedColumnName = "id")
   @JsonIgnore
   private User user;
 

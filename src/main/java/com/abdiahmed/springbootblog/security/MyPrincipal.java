@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Data
@@ -30,7 +31,7 @@ public class MyPrincipal implements UserDetails {
     user.getRole()
         .forEach(
             roles -> {
-              List<Authorities> authList = roles.getAuthorities();
+              Set<Authorities> authList = roles.getAuthorities();
               authList.forEach(auth -> authorities.add(new SimpleGrantedAuthority(auth.getName())));
             });
     return authorities;

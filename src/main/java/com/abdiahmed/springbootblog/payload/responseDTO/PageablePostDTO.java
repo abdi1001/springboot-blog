@@ -5,14 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class PageablePostDTO {
-  private List<PostResponseDTO> responseDTOList;
+  private Set<PostResponseDTO> responseDTOList;
   private int pageNo;
   private int pageSize;
   private int totalPages;

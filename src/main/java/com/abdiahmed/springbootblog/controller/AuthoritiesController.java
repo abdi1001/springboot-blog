@@ -1,43 +1,49 @@
 package com.abdiahmed.springbootblog.controller;
 
-import com.abdiahmed.springbootblog.error.UpdateResourceException;
+import com.abdiahmed.springbootblog.error.ResourceExist;
+import com.abdiahmed.springbootblog.model.Authorities;
 import com.abdiahmed.springbootblog.payload.requestDTO.CreateAuthoritiesDTO;
-import com.abdiahmed.springbootblog.payload.responseDTO.AuthoritiesResponseDTO;
-import com.abdiahmed.springbootblog.payload.responseDTO.RoleResponseDTO;
-import com.abdiahmed.springbootblog.service.interfaces.RoleService;
+import com.abdiahmed.springbootblog.service.interfaces.AuthoritiesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
-@RequestMapping("/api/v1/role/{roleId}/authorities")
+@RequestMapping("/api/v1/authorities")
 public class AuthoritiesController {
-
-  @Autowired RoleService roleService;
-  //
+  @Autowired
+  AuthoritiesService authoritiesService;
   @PostMapping()
-  public ResponseEntity<RoleResponseDTO> addAuthorityToRole(
-      @PathVariable long roleId, @RequestBody CreateAuthoritiesDTO createAuthoritiesDTO) {
-    RoleResponseDTO roleResponseDTO = roleService.addAuthorityToRole(roleId, createAuthoritiesDTO);
-    return new ResponseEntity<>(roleResponseDTO, HttpStatus.OK);
+  public ResponseEntity<Set<Authorities>> createAuthorities(@RequestBody Set<CreateAuthoritiesDTO> createAuthoritiesDTOSet){
+    Set<Authorities> authoritiesFromSet = authoritiesService.createAuthoritiesFromSet(createAuthoritiesDTOSet);
+    return new ResponseEntity<>(authoritiesFromSet, HttpStatus.OK);
   }
 
-  @PutMapping("/{authorityId}")
-  public ResponseEntity<RoleResponseDTO> updateAuthorityOnRole(
-      @PathVariable long roleId,
-      @PathVariable long authorityId,
-      @RequestBody AuthoritiesResponseDTO authoritiesResponseDTO)
-      throws UpdateResourceException {
-    RoleResponseDTO roleResponseDTO =
-        roleService.updateAuthorityOnRole(roleId, authorityId, authoritiesResponseDTO);
-    return new ResponseEntity<>(roleResponseDTO, HttpStatus.OK);
+  @PostMapping("{id}")
+  public ResponseEntity<Authorities> updateAuthorities(@PathVariable long id ,@RequestBody CreateAuthoritiesDTO createAuthoritiesDTO){
+    Authorities authorities = authoritiesService.updateById(id,createAuthoritiesDTO);
+    return new ResponseEntity<>(authorities, HttpStatus.OK);
   }
 
-  @DeleteMapping("/{authorityId}")
-  public ResponseEntity<RoleResponseDTO> deleteAuthorityFromRole(
-      @PathVariable long roleId, @PathVariable long authorityId) throws UpdateResourceException {
-    RoleResponseDTO roleResponseDTO = roleService.deleteAuthorityFromRole(roleId, authorityId);
-    return new ResponseEntity<>(roleResponseDTO, HttpStatus.OK);
+  @DeleteMapping()
+  public ResponseEntity<String> deleteAuthorities(@RequestBody Set<CreateAuthoritiesDTO> createAuthoritiesDTOSet)  {
+    authoritiesService.deleteAuthoritiesInSet(createAuthoritiesDTOSet);
+    return new ResponseEntity<>("Authorities Deleted", HttpStatus.OK);
   }
+
+  @GetMapping("{id}")
+  public ResponseEntity<Authorities> deleteAuthorities(@PathVariable long id) throws ResourceExist {
+    Authorities Authority = authoritiesService.findById(id);
+    return new ResponseEntity<>(Authority, HttpStatus.OK);
+  }
+  @GetMapping()
+  public ResponseEntity<Set<Authorities>> findAll() throws ResourceExist {
+    Set<Authorities> Authority = authoritiesService.findAll();
+    return new ResponseEntity<>(Authority, HttpStatus.OK);
+  }
+
+
 }

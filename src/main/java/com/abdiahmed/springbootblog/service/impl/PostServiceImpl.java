@@ -20,8 +20,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,8 +70,8 @@ public class PostServiceImpl implements PostService {
     Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
     Page<Post> page = postRepository.findAll(pageable);
 
-    List<PostResponseDTO> posts =
-        page.stream().map(post -> postMapper.mapToDTO(post)).collect(Collectors.toList());
+    Set<PostResponseDTO> posts =
+        page.stream().map(post -> postMapper.mapToDTO(post)).collect(Collectors.toSet());
 
     return PageablePostDTO.builder()
         .responseDTOList(posts)

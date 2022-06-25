@@ -6,6 +6,7 @@ import com.abdiahmed.springbootblog.error.UpdateResourceException;
 import com.abdiahmed.springbootblog.model.Authorities;
 import com.abdiahmed.springbootblog.model.Role;
 import com.abdiahmed.springbootblog.payload.requestDTO.CreateAuthoritiesDTO;
+import com.abdiahmed.springbootblog.payload.requestDTO.CreateRoleDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.AuthoritiesResponseDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.RoleResponseDTO;
 import com.abdiahmed.springbootblog.repository.RoleRepository;
@@ -15,9 +16,9 @@ import com.abdiahmed.springbootblog.service.mapper.RoleMapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -60,54 +61,63 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  public Role updateRole(long id, String role) {
+  public Role updateRole(long id, CreateRoleDTO role)  {
     Role foundRole = getRoleById(id);
-    foundRole.setName(role);
+    foundRole.setName(role.getName());
     return roleRepo.save(foundRole);
   }
 
   @Override
   public Role deleteRole(long id) {
     Role deleteRole = getRoleById(id);
-    deleteRole.getUsers().forEach(user -> {
-      if(user.getRole().contains(deleteRole)){
-        user.removeRoleFromUser(deleteRole);
-      }
-    });
-//    deleteRole.setUsers(Collections.emptyList());
-    deleteRole.setUsers(Collections.emptyList());
-    deleteRole.setAuthorities(Collections.emptyList());
+
     roleRepo.delete(deleteRole);
     return deleteRole;
   }
 
+
   @Override
+  @Transactional
   public RoleResponseDTO addAuthorityToRole(
-      long roleId, CreateAuthoritiesDTO createAuthoritiesDTO) {
+          long roleId, Set<CreateAuthoritiesDTO> createAuthoritiesDTO) {
     Role role = getRoleById(roleId);
-    role.getAuthorities().stream()
-        .filter(
-            authorities -> Objects.equals(authorities.getName(), createAuthoritiesDTO.getName()))
-        .findFirst()
-        .ifPresent(
-            (s) -> {
-              throw new ResourceExist("This role already has the authority: " + s.getName());
-            });
-    boolean authorityExists = authoritiesService.authorityExists(createAuthoritiesDTO.getName());
-    Authorities authority;
-    if(authorityExists){
-      authority = authoritiesService.findByName(createAuthoritiesDTO.getName());
-    } else {
-    authority = authoritiesMapper.mapToEntity(createAuthoritiesDTO);
-    }
-    role.addAuthority(authority);
+    Set<Authorities> authoritiesSet = authoritiesService.confirmAuthorityExistAndReturn(createAuthoritiesDTO);
+
+    authoritiesSet.forEach(authority -> role.getAuthorities().add(authority));
     roleRepo.save(role);
     return roleMapper.mapToDTO(role);
   }
 
   @Override
+  @Transactional
+  public RoleResponseDTO deleteAuthorityFromRole(
+          long roleId, Set<CreateAuthoritiesDTO> createAuthoritiesDTO) {
+    Role role = getRoleById(roleId);
+    Set<Authorities> authoritiesSet = authoritiesService.confirmAuthorityExistAndReturn(createAuthoritiesDTO);
+
+
+
+    authoritiesSet.forEach(authority -> role.getAuthorities().remove(authority));
+    roleRepo.save(role);
+    return roleMapper.mapToDTO(role);
+  }
+
+  @Override
+  public RoleResponseDTO addAuthorityToRoleById(
+          long roleId, long authorityId) {
+    Role role = getRoleById(roleId);
+    Authorities authority = authoritiesService.findById(authorityId);
+
+    role.addAuthority(authority);
+    roleRepo.save(role);
+    return roleMapper.mapToDTO(role);
+  }
+
+
+
+  @Override
   public RoleResponseDTO addAuthoritiesToRole(
-      long roleId, List<CreateAuthoritiesDTO> createAuthoritiesDTO) {
+          long roleId, Set<CreateAuthoritiesDTO> createAuthoritiesDTO) {
     Role role = getRoleById(roleId);
     role.getAuthorities()
         .forEach(
@@ -121,7 +131,7 @@ public class RoleServiceImpl implements RoleService {
               if (authorityExists)
                 throw new ResourceExist("authority " + authorityName + "already exists");
             });
-    List<Authorities> authorities = authoritiesMapper.mapToEntity(createAuthoritiesDTO);
+    Set<Authorities> authorities = authoritiesMapper.mapToEntity(createAuthoritiesDTO);
     authorities.forEach(role::addAuthority);
     roleRepo.save(role);
     return roleMapper.mapToDTO(role);

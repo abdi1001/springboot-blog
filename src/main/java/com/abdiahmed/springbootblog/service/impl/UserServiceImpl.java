@@ -22,7 +22,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,8 +69,8 @@ public class UserServiceImpl implements UserService {
       Role adminRole = roleService.createRole("ROLE_ADMIN");
       Role userRole = roleService.createRole("ROLE_USER");
 
-      List<CreateAuthoritiesDTO> adminAuthoritiesList =
-          List.of(
+      Set<CreateAuthoritiesDTO> adminAuthoritiesList =
+          Set.of(
               CreateAuthoritiesDTO.builder().name("User:Create").build(),
               CreateAuthoritiesDTO.builder().name("User:Read").build(),
               CreateAuthoritiesDTO.builder().name("User:Update").build(),
@@ -79,8 +78,8 @@ public class UserServiceImpl implements UserService {
 
       roleService.addAuthoritiesToRole(adminRole.getId(), adminAuthoritiesList);
 
-      CreateAuthoritiesDTO userAuthoritiesList =
-          CreateAuthoritiesDTO.builder().name("User:Read").build();
+      Set<CreateAuthoritiesDTO> userAuthoritiesList =
+          Set.of(CreateAuthoritiesDTO.builder().name("User:Read").build());
 
       roleService.addAuthorityToRole(userRole.getId(), userAuthoritiesList);
 
@@ -90,8 +89,8 @@ public class UserServiceImpl implements UserService {
       Role userRole;
       if (roleService.roleDoesNotExists("ROLE_USER")) {
         userRole = roleService.createRole("ROLE_USER");
-        CreateAuthoritiesDTO userAuthoritiesList =
-            CreateAuthoritiesDTO.builder().name("User:Read").build();
+        Set<CreateAuthoritiesDTO> userAuthoritiesList =
+            Set.of(CreateAuthoritiesDTO.builder().name("User:Read").build());
         roleService.addAuthorityToRole(userRole.getId(), userAuthoritiesList);
       }
       userRole = roleService.getRoleByName("ROLE_USER");
@@ -196,7 +195,7 @@ public class UserServiceImpl implements UserService {
             .isLast(page.isLast())
             .build();
 
-    List<UserResponseDTO> userResponseDTOList = new ArrayList<>();
+    Set<UserResponseDTO> userResponseDTOList = new HashSet<>();
 
     for (User user : users) {
       UserResponseDTO userResponseDTO = userMapper.mapToDTO(user);
@@ -233,7 +232,7 @@ public class UserServiceImpl implements UserService {
 
   public String removeRoleFromAllUsers(long roleId) {
     Role foundRole = roleService.getRoleById(roleId);
-    List<User> users = foundRole.getUsers();
+    Set<User> users = foundRole.getUsers();
     users.forEach(user -> user.removeRoleFromUser(foundRole));
     List<User> updatedUserList = userRepo.saveAll(users);
 

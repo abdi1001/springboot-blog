@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -16,5 +16,5 @@ public class RoleResponseDTO {
 
   private Long id;
   private String name;
-  private List<AuthoritiesResponseDTO> authorities = new ArrayList<>();
+  private Set<AuthoritiesResponseDTO> authorities = new HashSet<>();
 }
