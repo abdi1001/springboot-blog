@@ -40,7 +40,7 @@ CREATE TABLE `post` (
 --
 
 CREATE TABLE `comment` (
-                           `id` varchar(45) NOT NULL,
+                           `id` bigint NOT NULL AUTO_INCREMENT,
                            `comment` varchar(255) DEFAULT NULL,
                            `my_user_id` bigint NOT NULL,
                            `post_id` bigint NOT NULL,

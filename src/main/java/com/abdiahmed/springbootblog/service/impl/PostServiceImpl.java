@@ -10,6 +10,7 @@ import com.abdiahmed.springbootblog.payload.responseDTO.CommentResponseDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PageablePostDTO;
 import com.abdiahmed.springbootblog.payload.responseDTO.PostResponseDTO;
 import com.abdiahmed.springbootblog.repository.PostRepository;
+import com.abdiahmed.springbootblog.security.MyPrincipal;
 import com.abdiahmed.springbootblog.service.interfaces.PostService;
 import com.abdiahmed.springbootblog.service.mapper.CommentMapperImpl;
 import com.abdiahmed.springbootblog.service.mapper.PostMapperImpl;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -119,9 +121,20 @@ public class PostServiceImpl implements PostService {
   public PostResponseDTO addCommentToPost(long postId, CommentRequestDTO commentRequestDTO) {
     Post post = getPostByIdInternal(postId);
     Comment comment1 = commentMapper.mapToEntity(commentRequestDTO);
+//    User user = finduser();
+//    comment1.setUser(user);
+    comment1.setUser(post.getUser());
+//    post.setUser(user);P
     post.addComment(comment1);
     Post savedPost = postRepository.save(post);
     return postMapper.mapToDTO(savedPost);
+  }
+
+  private User finduser() {
+    UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    String username = userDetails.getUsername();
+    User user = userService.findByName(username);
+    return user;
   }
 
   @Override

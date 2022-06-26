@@ -16,6 +16,8 @@ public interface UserService {
 
   User findByName(String name);
 
+  User findById(long id);
+
   long countUsers();
 
   User saveUser(User user);

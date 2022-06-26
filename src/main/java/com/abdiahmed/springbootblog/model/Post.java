@@ -28,18 +28,18 @@ public class Post {
 
 
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "my_user_id", referencedColumnName = "id")
   @JsonIgnore
   private User user;
 
   public void addComment(Comment comment) {
-    comments.add(comment);
     comment.setPost(this);
+    comments.add(comment);
   }
 
   public void deleteComment(Comment comment) {
-    comments.remove(comment);
     comment.setPost(null);
+    comments.remove(comment);
   }
 }

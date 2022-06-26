@@ -140,6 +140,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public User findById(long id) {
+    return userRepo
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("User", "name", id));
+  }
+
+  @Override
   public long countUsers() {
     return userRepo.count();
   }
@@ -257,5 +264,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void deleteUser(long id) {}
+  public void deleteUser(long id) {
+    User user = findById(id);
+    userRepo.delete(user);
+  }
 }

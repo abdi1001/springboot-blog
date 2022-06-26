@@ -65,4 +65,9 @@ public class UserController {
     String newUser = userService.removeRoleFromAllUsers(roleId);
     return new ResponseEntity<>(newUser, HttpStatus.OK);
   }
+  @DeleteMapping("/removeUser/{userId}")
+  public ResponseEntity<String> deleteUser(@PathVariable long userId) {
+    userService.deleteUser(userId);
+    return new ResponseEntity<>("User Deleted", HttpStatus.OK);
+  }
 }

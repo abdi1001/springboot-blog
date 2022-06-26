@@ -25,7 +25,7 @@ public class User {
   private String email;
   private String password;
 
-  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "user_role",
       joinColumns = @JoinColumn(name = "my_user_id"),
@@ -34,6 +34,9 @@ public class User {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private Set<Post> posts = new HashSet<>();
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  private Set<Comment> comments = new HashSet<>();
 
   private boolean isAccountNonExpired;
   private boolean isAccountNonLocked;
