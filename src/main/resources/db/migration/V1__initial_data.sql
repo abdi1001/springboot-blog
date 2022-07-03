@@ -10,14 +10,14 @@
 
 CREATE TABLE `my_user` (
                            `id` bigint NOT NULL AUTO_INCREMENT,
-                           `email` varchar(255) DEFAULT NULL,
-                           `is_account_non_expired` bit(1) NOT NULL,
-                           `is_account_non_locked` bit(1) NOT NULL,
-                           `is_credentials_non_expired` bit(1) NOT NULL,
-                           `is_enabled` bit(1) NOT NULL,
-                           `name` varchar(255) DEFAULT NULL,
-                           `password` varchar(255) DEFAULT NULL,
-                           `username` varchar(255) DEFAULT NULL,
+                           `email` varchar(255) NOT NULL,
+                           `is_account_non_expired` bit(1) NOT NULL DEFAULT 0,
+                           `is_account_non_locked` bit(1) NOT NULL DEFAULT 0,
+                           `is_credentials_non_expired` bit(1) NOT NULL DEFAULT 0,
+                           `is_enabled` bit(1) NOT NULL DEFAULT 0,
+                           `name` varchar(20) NOT NULL,
+                           `password` varchar(30) NOT NULL,
+                           `username` varchar(30) NOT NULL,
                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -27,8 +27,8 @@ CREATE TABLE `my_user` (
 
 CREATE TABLE `post` (
                         `id` bigint NOT NULL AUTO_INCREMENT,
-                        `body` varchar(255) DEFAULT NULL,
-                        `title` varchar(255) DEFAULT NULL,
+                        `body` varchar(255) NOT NULL,
+                        `title` varchar(255) NOT NULL,
                         `my_user_id` bigint NOT NULL,
                         PRIMARY KEY (`id`),
                         KEY `fk_post_my_user1_idx` (`my_user_id`),
@@ -41,7 +41,7 @@ CREATE TABLE `post` (
 
 CREATE TABLE `comment` (
                            `id` bigint NOT NULL AUTO_INCREMENT,
-                           `comment` varchar(255) DEFAULT NULL,
+                           `comment` varchar(255) NOT NULL,
                            `my_user_id` bigint NOT NULL,
                            `post_id` bigint NOT NULL,
                            PRIMARY KEY (`id`),
@@ -80,7 +80,7 @@ CREATE TABLE `user_role` (
 
 CREATE TABLE `my_authorities` (
                                   `id` bigint NOT NULL AUTO_INCREMENT,
-                                  `name` varchar(255) DEFAULT NULL,
+                                  `name` varchar(255) NOT NULL,
                                   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

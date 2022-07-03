@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/auth/")
 public class AuthController {
@@ -21,7 +23,7 @@ public class AuthController {
   @Autowired UserServiceImpl myUserService;
 
   @PostMapping("/register")
-  public ResponseEntity<UserResponseDTO> myUser(@RequestBody RegisterDTO registerDTO)
+  public ResponseEntity<UserResponseDTO> myUser(@Valid @RequestBody RegisterDTO registerDTO)
       throws ResourceExist {
     UserResponseDTO user = myUserService.registerUser(registerDTO);
     return new ResponseEntity<>(user, HttpStatus.CREATED);

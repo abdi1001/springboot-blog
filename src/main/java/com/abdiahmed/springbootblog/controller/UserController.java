@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("api/v1/user")
 public class UserController {
@@ -49,7 +51,7 @@ public class UserController {
 //  }
 
   @PostMapping("/{userId}/addRole")
-  public ResponseEntity<UserResponseDTO> addRoleToUser(@PathVariable long userId, @RequestBody CreateRoleDTO createRoleDTO) {
+  public ResponseEntity<UserResponseDTO> addRoleToUser(@PathVariable long userId,@Valid @RequestBody CreateRoleDTO createRoleDTO) {
     UserResponseDTO newUser = userService.addRoleToUser(userId,createRoleDTO);
     return new ResponseEntity<>(newUser, HttpStatus.OK);
   }
