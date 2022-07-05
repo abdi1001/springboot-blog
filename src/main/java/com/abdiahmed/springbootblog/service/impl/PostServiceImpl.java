@@ -1,6 +1,7 @@
 package com.abdiahmed.springbootblog.service.impl;
 
 import com.abdiahmed.springbootblog.error.ResourceNotFoundException;
+import com.abdiahmed.springbootblog.error.UpdateResourceException;
 import com.abdiahmed.springbootblog.model.Comment;
 import com.abdiahmed.springbootblog.model.Post;
 import com.abdiahmed.springbootblog.model.User;
@@ -51,9 +52,7 @@ public class PostServiceImpl implements PostService {
   @Override
   public PostResponseDTO createPost(CreatePostDTO createPostDTO) {
     Post post = postMapper.mapToEntity(createPostDTO);
-    String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-    User foundUser = userService.findByName(username);
+    User foundUser = getUsername();
 
     post.setUser(foundUser);
     foundUser.addPostForUser(post);
@@ -61,6 +60,13 @@ public class PostServiceImpl implements PostService {
 
     Post savedPost = postRepository.save(post);
     return postMapper.mapToDTO(savedPost);
+  }
+
+  private User getUsername() {
+    String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+    User foundUser = userService.findByName(username);
+    return foundUser;
   }
 
   @Override
@@ -123,7 +129,7 @@ public class PostServiceImpl implements PostService {
     Comment comment1 = commentMapper.mapToEntity(commentRequestDTO);
 //    User user = finduser();
 //    comment1.setUser(user);
-    comment1.setUser(post.getUser());
+    comment1.setUser(getUsername());
 //    post.setUser(user);P
     post.addComment(comment1);
     Post savedPost = postRepository.save(post);
@@ -154,6 +160,9 @@ public class PostServiceImpl implements PostService {
       long postId, long commentId, CommentRequestDTO commentRequestDTO) {
     Post post = getPostByIdInternal(postId);
     Comment comment1 = commentService.findCommentByIdInternal(commentId);
+    if(comment1.getUser() != getUsername()) {
+      throw new RuntimeException("Cannot update a comment that does not belong to you!");
+    }
     comment1.setComment(commentRequestDTO.getComment());
     Post savedPost = postRepository.save(post);
     return postMapper.mapToDTO(savedPost);

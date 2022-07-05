@@ -25,6 +25,6 @@ public class RegisterDTO {
   @NotEmpty
   private String email;
   @NotEmpty
-  @Size(min = 5, message = "user name should have at lest 2 characters long")
+  @Size(min = 4, message = "password should have at lest 2 characters long")
   private String password;
 }

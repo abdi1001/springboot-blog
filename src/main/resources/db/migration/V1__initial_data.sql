@@ -10,13 +10,13 @@
 
 CREATE TABLE `my_user` (
                            `id` bigint NOT NULL AUTO_INCREMENT,
-                           `email` varchar(255) NOT NULL,
+                           `email` varchar(320) NOT NULL,
                            `is_account_non_expired` bit(1) NOT NULL DEFAULT 0,
                            `is_account_non_locked` bit(1) NOT NULL DEFAULT 0,
                            `is_credentials_non_expired` bit(1) NOT NULL DEFAULT 0,
                            `is_enabled` bit(1) NOT NULL DEFAULT 0,
                            `name` varchar(20) NOT NULL,
-                           `password` varchar(30) NOT NULL,
+                           `password` binary(60) NOT NULL,
                            `username` varchar(30) NOT NULL,
                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
