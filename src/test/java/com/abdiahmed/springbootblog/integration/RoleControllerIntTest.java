@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,7 +43,6 @@ public class RoleControllerIntTest {
     roleRepository.deleteAll();
     role = new Role();
     role.setName("ROLE:TEST");
-    roleRepository.save(role);
   }
 
   @Test
@@ -53,8 +51,7 @@ public class RoleControllerIntTest {
   public void givenRoleObject_whenPostRole_thenSaveAndReturnRole() throws Exception {
 
     // given
-    Role newRole = new Role();
-    newRole.setName("ROLE:NEW");
+
 
     // when
     ResultActions response =
@@ -62,7 +59,7 @@ public class RoleControllerIntTest {
             post("/api/v1/role")
 
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(newRole)));
+                .content(objectMapper.writeValueAsString(role)));
 
     // then
     response.andDo(print());
@@ -74,12 +71,55 @@ public class RoleControllerIntTest {
   public void givenRoleId_whenGetById_thenReturnRole() throws Exception {
 
     // given
+    roleRepository.save(role);
     Long roleId1 = role.getId();
 
     // when
     ResultActions response =
             mockMvc.perform(
                     get("/api/v1/role/" + roleId1));
+
+    // then
+    response.andDo(print()).andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("Junit test for ")
+  @WithMockUser(username = "admin",roles = {"ADMIN","USER"})
+  public void givenRoleObject_whenUpdateById_thenReturnUpdatedRole() throws Exception {
+
+    // given
+    roleRepository.save(role);
+    Long roleId1 = role.getId();
+
+    Role updateRole = new Role();
+    updateRole.setName("UPDATED:ROLE");
+
+    // when
+    ResultActions response =
+            mockMvc.perform(
+                    put("/api/v1/role/" + roleId1)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .content(objectMapper.writeValueAsString(updateRole)));
+
+    // then
+    response.andDo(print()).andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("Junit test for ")
+  @WithMockUser(username = "admin",roles = {"ADMIN","USER"})
+  public void givenRoleObject_whenDeleteById_thenReturnDeletedRole() throws Exception {
+
+    // given
+    roleRepository.save(role);
+    Long roleId1 = role.getId();
+
+    // when
+    ResultActions response =
+            mockMvc.perform(
+                    delete("/api/v1/role/" + roleId1)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE));
 
     // then
     response.andDo(print()).andExpect(status().isOk());
@@ -102,7 +142,7 @@ public class RoleControllerIntTest {
                     get("/api/v1/role/"));
 
     // then
-    response.andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.size()", CoreMatchers.is(3)));
+    response.andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.size()", CoreMatchers.is(2)));
   }
 
   @Test
@@ -111,6 +151,7 @@ public class RoleControllerIntTest {
   public void givenRoleWithAuthority_whenSave_thenReturnRoleWithAuthority() throws Exception {
 
     // given
+    roleRepository.save(role);
     Long roleId = role.getId();
 
     Set<CreateAuthoritiesDTO> authSet = new HashSet();
